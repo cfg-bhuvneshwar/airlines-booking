@@ -1,0 +1,68 @@
+[
+  {
+    "city": "New Delhi",
+    "country": "India",
+    "airportCode": "DEL",
+    "airportName": "Indira Gandhi International Airport"
+  },
+  {
+    "city": "Mumbai",
+    "country": "India",
+    "airportCode": "BOM",
+    "airportName": "Chhatrapati Shivaji Maharaj International Airport"
+  },
+  {
+    "city": "Pune",
+    "country": "India",
+    "airportCode": "PNQ",
+    "airportName": "Pune International Airport"
+  },
+  {
+    "city": "Jaipur",
+    "country": "India",
+    "airportCode": "JAI",
+    "airportName": "Jaipur International Airport"
+  },
+  {
+    "city": "Bengaluru",
+    "country": "India",
+    "airportCode": "BLR",
+    "airportName": "Kempegowda International Airport"
+  },
+  {
+    "city": "Chennai",
+    "country": "India",
+    "airportCode": "MAA",
+    "airportName": "Chennai International Airport"
+  },
+  {
+    "city": "Kolkata",
+    "country": "India",
+    "airportCode": "CCU",
+    "airportName": "Netaji Subhas Chandra Bose International Airport"
+  },
+  {
+    "city": "Hyderabad",
+    "country": "India",
+    "airportCode": "HYD",
+    "airportName": "Rajiv Gandhi International Airport"
+  },
+  {
+    "city": "Hyderabad",
+    "country": "India",
+    "airportCode": "HYD",
+    "airportName": "Rajiv Gandhi International Airport"
+  },
+  {
+    "city": "Hyderabad",
+    "country": "India",
+    "airportCode": "HYD",
+    "airportName": "Rajiv Gandhi International Airport"
+  },
+  {
+    "city": "Hyderabad",
+    "country": "India",
+    "airportCode": "HYD",
+    "airportName": "Rajiv Gandhi International Airport"
+  }
+]

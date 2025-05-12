@@ -1,0 +1,52 @@
+[
+  {
+    "departureTime": "4:50",
+    "arrivalTime": "16:05",
+    "numberOfStops": 1,
+    "timeDuration": "20h 45m",
+    "fromAirportCode": "DEL",
+    "toAirportCode": "NYC",
+    "economyFare": 100000,
+    "businessFare": 200000
+  },
+  {
+    "departureTime": "5:50",
+    "arrivalTime": "17:05",
+    "numberOfStops": 1,
+    "timeDuration": "10h 45m",
+    "fromAirportCode": "DEL",
+    "toAirportCode": "NYC",
+    "economyFare": 130000,
+    "businessFare": 250000
+  },
+  {
+    "departureTime": "2:50",
+    "arrivalTime": "14:05",
+    "numberOfStops": 2,
+    "timeDuration": "15h 45m",
+    "fromAirportCode": "DEL",
+    "toAirportCode": "NYC",
+    "economyFare": 222222,
+    "businessFare": 350000
+  },
+  {
+    "departureTime": "22:50",
+    "arrivalTime": "14:05",
+    "numberOfStops": 1,
+    "timeDuration": "10h 45m",
+    "fromAirportCode": "PNQ",
+    "toAirportCode": "LON",
+    "economyFare": 110000,
+    "businessFare": 220000
+  },
+  {
+    "departureTime": "12:50",
+    "arrivalTime": "14:05",
+    "numberOfStops": 2,
+    "timeDuration": "15h 45m",
+    "fromAirportCode": "PNQ",
+    "toAirportCode": "LON",
+    "economyFare": 120000,
+    "businessFare": 200000
+  }
+]
