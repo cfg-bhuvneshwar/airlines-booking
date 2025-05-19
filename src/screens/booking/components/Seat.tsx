@@ -7,42 +7,36 @@ const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: any) => {
     selectedSeat.status === 'selected' && styles.selectedSeat,
     seat.status === 'unavailable' && styles.occupiedSeat,
   ];
+
   return (
     <View>
       {rowIndex === 0 && seat.seatNumber % 6 === 1 ? (
-        <Text style={{ alignSelf: 'center' }}>A</Text>
+        <Text style={styles.seatLabel}>A</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 2 ? (
-        <Text style={{ alignSelf: 'center' }}>B</Text>
+        <Text style={styles.seatLabel}>B</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 3 ? (
-        <Text
-          style={{
-            alignSelf: 'center',
-            marginRight: 40,
-          }}>
-          C
-        </Text>
+        <Text style={[styles.seatLabel, styles.seatLabelMarginRight]}>C</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 4 ? (
-        <Text style={{ alignSelf: 'center' }}>D</Text>
+        <Text style={styles.seatLabel}>D</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 5 ? (
-        <Text style={{ alignSelf: 'center' }}>E</Text>
+        <Text style={styles.seatLabel}>E</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 0 ? (
-        <Text style={{ alignSelf: 'center' }}>F</Text>
+        <Text style={styles.seatLabel}>F</Text>
       ) : null}
-      <View
-        style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+      <View style={styles.seatRow}>
         <TouchableWithoutFeedback
           onPress={() => onSelect(seat.seatNumber)}
           disabled={seat.status === 'unavailable'}>
           <View style={seatStyle} />
         </TouchableWithoutFeedback>
         {seat.seatNumber % 6 === 3 ? (
-          <View style={[styles.seat]}>
-            <Text style={{ fontSize: 16 }}>{rowIndex + 1}</Text>
+          <View style={styles.seatNumberContainer}>
+            <Text style={styles.seatNumberText}>{rowIndex + 1}</Text>
           </View>
         ) : null}
       </View>
@@ -75,6 +69,25 @@ const styles = StyleSheet.create({
   },
   occupiedSeat: {
     backgroundColor: '#e1e1e1',
+  },
+  seatLabel: {
+    alignSelf: 'center',
+  },
+  seatLabelMarginRight: {
+    marginRight: 40,
+  },
+  seatRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  seatNumberContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 2,
+  },
+  seatNumberText: {
+    fontSize: 16,
   },
 });
 

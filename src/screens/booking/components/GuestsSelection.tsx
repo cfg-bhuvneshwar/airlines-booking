@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 
 const GuestsSelection = ({
   title,
@@ -6,59 +6,30 @@ const GuestsSelection = ({
   onPressMinus,
   onPressPlus,
   value,
-  styles,
+  styles: customStyles,
 }: any) => {
   return (
-    <View
-      style={[
-        {
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        styles,
-      ]}>
-      <View style={{ flex: 1 }}>
-        {/* <Text>Adults</Text>
-        <Text>Age 12+</Text> */}
-        <Text>{title}</Text>
-        <Text>{subTitle}</Text>
+    <View style={[styles.container, customStyles]}>
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subTitle}>{subTitle}</Text>
       </View>
-      <View style={{ flexDirection: 'row' }}>
+      <View style={styles.counterContainer}>
         <Text
-          style={{
-            height: 30,
-            width: 30,
-            fontSize: 20,
-            borderWidth: 1,
-            textAlign: 'center',
-          }}
+          style={styles.counterButton}
           onPress={() => {
-            if ((title === 'Adults' && value > 1) || value > 0) {
+            if (
+              (title === 'Adults' && value > 1) ||
+              (title !== 'Adults' && value > 0)
+            ) {
               onPressMinus(value - 1);
             }
           }}>
           -
         </Text>
+        <Text style={styles.counterValue}>{value}</Text>
         <Text
-          style={{
-            height: 30,
-            width: 30,
-            fontSize: 20,
-            borderWidth: 1,
-            textAlign: 'center',
-            marginHorizontal: 10,
-          }}>
-          {value}
-        </Text>
-        <Text
-          style={{
-            height: 30,
-            width: 30,
-            fontSize: 20,
-            borderWidth: 1,
-            textAlign: 'center',
-          }}
+          style={styles.counterButton}
           onPress={() => {
             onPressPlus(value + 1);
           }}>
@@ -68,5 +39,43 @@ const GuestsSelection = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  subTitle: {
+    fontSize: 14,
+    color: 'grey',
+  },
+  counterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  counterButton: {
+    height: 30,
+    width: 30,
+    fontSize: 20,
+    borderWidth: 1,
+    textAlign: 'center',
+    borderRadius: 5,
+  },
+  counterValue: {
+    height: 30,
+    width: 30,
+    fontSize: 20,
+    textAlign: 'center',
+    marginHorizontal: 10,
+  },
+});
 
 export default GuestsSelection;

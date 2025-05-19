@@ -2,20 +2,32 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { SeatSelectionScreenProps } from '../../navigation/types';
 import { useEffect, useState } from 'react';
-import SeatRow from './components/SeatRow';
 import { Colors } from '../../common/constants/Colors';
-import { useAppSelector } from '../../common/hooks/hooks';
-import { selectRecentSearchData } from '../../state/flightSlice';
+import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
+import {
+  saveCurrentBookingData,
+  selectCurrentBooking,
+  selectRecentSearchData,
+} from '../../state/flightSlice';
+import SeatSelection from './components/SeatSelection';
+import Header from '../../common/components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const SeatSelectionScreen = ({ navigation }: SeatSelectionScreenProps) => {
+const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
+  navigation,
+}: SeatSelectionScreenProps) => {
+  const dispatch = useAppDispatch();
   const recentSearchData = useAppSelector(selectRecentSearchData);
+  const currentBooking = useAppSelector(selectCurrentBooking);
 
-  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+  const [selectedTab, setSelectedTab] = useState<'onward' | 'return'>('onward');
+  const [onwardSelectedSeats, setOnwardSelectedSeats] = useState<number[]>([]);
+  const [returnSelectedSeats, setReturnSelectedSeats] = useState<number[]>([]);
   const [seats, setSeats] = useState<{ seatNumber: number; status: string }[]>(
     [],
   );
@@ -29,111 +41,191 @@ const SeatSelectionScreen = ({ navigation }: SeatSelectionScreenProps) => {
     setSeats(seatArr);
   }, []);
 
-  console.log(selectedSeats);
-
   const handleSeatSelect = (seatNumber: number) => {
-    if (selectedSeats.includes(seatNumber)) {
-      setSelectedSeats(selectedSeats.filter(value => value !== seatNumber));
-    } else {
-      if (
-        selectedSeats.length <
-        recentSearchData[0].adults +
-          recentSearchData[0].children +
-          recentSearchData[0].infantsWithSeats
-      ) {
-        setSelectedSeats([...selectedSeats, seatNumber]);
+    if (selectedTab === 'onward') {
+      if (onwardSelectedSeats.includes(seatNumber)) {
+        setOnwardSelectedSeats(
+          onwardSelectedSeats.filter(value => value !== seatNumber),
+        );
       } else {
-        console.log('Seats selected');
+        if (
+          onwardSelectedSeats.length <
+          recentSearchData[0].adults +
+            recentSearchData[0].children +
+            recentSearchData[0].infantsWithSeats
+        ) {
+          setOnwardSelectedSeats([...onwardSelectedSeats, seatNumber]);
+        }
+      }
+    } else {
+      if (returnSelectedSeats.includes(seatNumber)) {
+        setReturnSelectedSeats(
+          returnSelectedSeats.filter(value => value !== seatNumber),
+        );
+      } else {
+        if (
+          returnSelectedSeats.length <
+          recentSearchData[0].adults +
+            recentSearchData[0].children +
+            recentSearchData[0].infantsWithSeats
+        ) {
+          setReturnSelectedSeats([...returnSelectedSeats, seatNumber]);
+        }
       }
     }
   };
 
-  // Group seats into rows
-  const rows = [];
-  for (let i = 0; i < seats.length; i += 6) {
-    rows.push(seats.slice(i, i + 6)); // Assuming 6 seats per row
-  }
+  const handleConfirm = () => {
+    if (selectedTab === 'onward') {
+      if ('roundTrip' in currentBooking) {
+        setSelectedTab('return');
+      } else {
+        dispatch(
+          saveCurrentBookingData({
+            oneway: {
+              ...currentBooking.oneway,
+              ...{
+                seats: onwardSelectedSeats,
+              },
+            },
+          }),
+        );
+        navigation.navigate('PaymentScreen');
+      }
+    } else {
+      dispatch(
+        saveCurrentBookingData({
+          roundTrip: {
+            ...currentBooking.roundTrip,
+            ...{
+              seats: returnSelectedSeats,
+            },
+          },
+        }),
+      );
+      navigation.navigate('PaymentScreen');
+    }
+  };
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <Text>Window or aisle?</Text>
-        <Text>Book your seat now</Text>
-        <View style={{ alignItems: 'center', marginTop: 20 }}>
-          <Text>Main deck</Text>
-          <Text style={{ marginVertical: 30 }}>↑ Front of aircraft ↑</Text>
-          <View style={{ marginVertical: 20 }}>
-            {rows.map((row, index) => (
-              <SeatRow
-                key={index}
-                row={row}
-                onSelect={handleSeatSelect}
-                index={index}
-                selectedSeats={selectedSeats}
-              />
-            ))}
-          </View>
-          <Text style={{ marginVertical: 30 }}>↓ Back of aircraft ↓</Text>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <Header title="Seat Selection" />
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Window or aisle?</Text>
+          <Text style={styles.subtitle}>Book your seat now</Text>
 
-          <TouchableWithoutFeedback
-            onPress={() => {
-              navigation.navigate('PaymentScreen');
-            }}
-            disabled={
-              selectedSeats.length <
+          {/* Conditionally render the tab view */}
+          {currentBooking.roundTrip &&
+            Object.keys(currentBooking.roundTrip).length > 0 && (
+              <View style={styles.tabContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.tab,
+                    selectedTab === 'onward' && styles.activeTab,
+                  ]}
+                  onPress={() => setSelectedTab('onward')}>
+                  <Text
+                    style={[
+                      styles.tabText,
+                      selectedTab === 'onward' && styles.activeTabText,
+                    ]}>
+                    Onward Flight
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tab,
+                    selectedTab === 'return' && styles.activeTab,
+                  ]}
+                  onPress={() => setSelectedTab('return')}>
+                  <Text
+                    style={[
+                      styles.tabText,
+                      selectedTab === 'return' && styles.activeTabText,
+                    ]}>
+                    Return Flight
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+          <SeatSelection
+            seats={seats}
+            selectedSeats={
+              selectedTab === 'onward'
+                ? onwardSelectedSeats
+                : returnSelectedSeats
+            }
+            onSelect={handleSeatSelect}
+            totalPassengers={
               recentSearchData[0].adults +
-                recentSearchData[0].children +
-                recentSearchData[0].infantsWithSeats
-            }>
-            <View
-              style={{
-                backgroundColor: Colors.buttonBackground,
-                alignItems: 'center',
-                height: 45,
-                justifyContent: 'center',
-                borderRadius: 25,
-                marginVertical: 15,
-                marginHorizontal: 20,
-                width: '100%',
-              }}>
-              <Text style={{ color: 'white' }}>Confirm</Text>
-            </View>
-          </TouchableWithoutFeedback>
+              recentSearchData[0].children +
+              recentSearchData[0].infantsWithSeats
+            }
+            onConfirm={handleConfirm}
+            isConfirmDisabled={
+              selectedTab === 'onward'
+                ? onwardSelectedSeats.length <
+                  recentSearchData[0].adults +
+                    recentSearchData[0].children +
+                    recentSearchData[0].infantsWithSeats
+                : returnSelectedSeats.length <
+                  recentSearchData[0].adults +
+                    recentSearchData[0].children +
+                    recentSearchData[0].infantsWithSeats
+            }
+          />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     margin: 20,
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 15,
     borderRadius: 20,
   },
-  row: {
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    fontSize: 15,
+  },
+  tabContainer: {
     flexDirection: 'row',
-    marginVertical: 5,
-  },
-  seat: {
-    width: 40,
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'black',
     justifyContent: 'center',
+    marginVertical: 10,
+  },
+  tab: {
+    flex: 1,
+    padding: 10,
     alignItems: 'center',
-    marginHorizontal: 2,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
   },
-  availableSeat: {
-    backgroundColor: 'green',
+  activeTab: {
+    borderBottomColor: Colors.primary,
   },
-  selectedSeat: {
-    backgroundColor: 'blue',
+  tabText: {
+    fontSize: 16,
+    color: '#888',
   },
-  occupiedSeat: {
-    backgroundColor: 'gray',
+  activeTabText: {
+    color: Colors.primary,
+    fontWeight: 'bold',
   },
 });
 

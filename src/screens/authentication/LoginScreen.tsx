@@ -6,60 +6,46 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LoginScreenProps } from '../../navigation/types';
-import { useAppDispatch } from '../../common/hooks/hooks';
-import auth from '@react-native-firebase/auth';
-import { createOrUpdateUser } from '../../utils/UserHandler';
-import { saveUserData } from '../../state/userSlice';
+import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
+import { saveUserData, selectRegisterData } from '../../state/userSlice';
 import { UserData } from '../../utils/types';
 import { Colors } from '../../common/constants/Colors';
 import { commonStyles } from '../../common/constants/commonStyles';
+import Header from '../../common/components/Header';
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const dispatch = useAppDispatch();
+  const registerData = useAppSelector(selectRegisterData);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(userData => {
-        const user: UserData = {
-          uid: userData.user.uid,
-          name: userData.user.displayName ?? '',
-          image_url: userData.user.photoURL ?? '',
-          email: userData.user.email as string,
-        };
+    const userData = registerData.find(
+      item => item.email === email && item.password === password,
+    ) as UserData;
 
-        createOrUpdateUser(user, () => {
-          dispatch(
-            saveUserData({
-              uid: user.uid,
-              name: user.name,
-              email: user.email,
-              image_url: user.image_url,
-            }),
-          );
-          navigation.replace('HomeScreen');
-        });
-      })
-      .catch(error => {
-        switch (error.code) {
-          case 'auth/user-not-found':
-            console.log('Account does not exist');
-            break;
-          case 'auth/invalid-email':
-            console.log('That email address is invalid!');
-            break;
-          case 'auth/weak-password':
-            console.log('The given password is invalid');
-            break;
-          default:
-            console.error(error);
-            break;
-        }
-      });
+    dispatch(
+      saveUserData({
+        uid: userData.uid,
+        title: userData.title,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        dob: userData.dob,
+        memberType: userData.memberType,
+        points: userData.points,
+        bookings: userData.bookings,
+        miles: userData.miles,
+        contactNumber: userData.contactNumber,
+      }),
+    );
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'HomeScreen' }],
+    });
   };
 
   const handleRegister = () => {
@@ -67,44 +53,55 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        style={styles.emailPasswordInput}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={[commonStyles.marginTopLarge, styles.emailPasswordInput]}
-      />
-      <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-        <Text style={{ color: Colors.light }}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
-        <Text style={{ color: Colors.dark }}>
-          Don't have account Yet? Create Account
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <Header title="Login" />
+      <View style={styles.container}>
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          style={styles.emailPasswordInput}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={[commonStyles.marginTopLarge, styles.emailPasswordInput]}
+        />
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <Text style={{ color: Colors.light }}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleRegister}
+          style={styles.registerButton}>
+          <Text style={{ color: Colors.dark }}>
+            Don't have account Yet? Create Account
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
-    justifyContent: 'center',
     flex: 1,
     padding: 25,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
   emailPasswordInput: {
-    height: 40,
+    height: 50,
     borderWidth: 1,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
+    marginVertical: 10,
   },
   loginButton: {
     backgroundColor: Colors.buttonBackground,

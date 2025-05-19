@@ -7,12 +7,12 @@ const SplashScreen = ({ navigation }: SplashScreenProps) => {
   const userData = useAppSelector(selectUserData);
 
   useEffect(() => {
-    if (userData.user.uid !== '') {
+    if (userData.uid !== '') {
       navigation.replace('HomeScreen');
     } else {
-      navigation.replace('LoginScreen');
+      navigation.replace('PreLoginScreen');
     }
-  }, [navigation, userData.user.uid]);
+  }, [navigation, userData.uid]);
 
   return <></>;
 };

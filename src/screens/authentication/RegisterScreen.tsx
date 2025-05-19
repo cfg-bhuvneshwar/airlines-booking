@@ -1,111 +1,193 @@
 import { useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {
+  Modal,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { RegisterScreenProps } from '../../navigation/types';
 import { UserData } from '../../utils/types';
-import { createOrUpdateUser } from '../../utils/UserHandler';
 import { useAppDispatch } from '../../common/hooks/hooks';
-import { saveUserData } from '../../state/userSlice';
+import { saveRegisterData, saveUserData } from '../../state/userSlice';
 import { Text } from '@react-navigation/elements';
+import { Colors } from '../../common/constants/Colors';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Calendar } from 'react-native-calendars';
+import { formatDateDob, generate16DigitId } from '../../utils/Utils';
+import Header from '../../common/components/Header';
 
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
+  const [title, setTitle] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [dob, setDob] = useState('');
   const [password, setPassword] = useState('');
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleDateSelect = (date: any) => {
+    setDob(date.dateString);
+    setIsModalVisible(false);
+  };
+
   const handleRegister = async () => {
-    try {
-      const userData = await auth().createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      const user: UserData = {
-        uid: userData.user.uid,
-        name: userData.user.displayName ?? '',
-        image_url: userData.user.photoURL ?? '',
-        email: userData.user.email as string,
-      };
-      createOrUpdateUser(user, () => {
-        dispatch(
-          saveUserData({
-            uid: user.uid,
-            name: user.name,
-            email: user.email,
-            image_url: user.image_url,
-          }),
-        );
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'HomeScreen' }],
-        });
-      });
-    } catch (error: any) {
-      switch (error.code) {
-        case 'auth/email-already-in-use':
-          console.log('That email address is already in use!');
-          break;
-        case 'auth/invalid-email':
-          console.log('That email address is invalid!');
-          break;
-        case 'auth/weak-password':
-          console.log('The given password is invalid');
-          break;
-        default:
-          console.error(error);
-          break;
-      }
-    }
+    const user: UserData = {
+      uid: generate16DigitId(),
+      title,
+      firstName,
+      lastName,
+      dob,
+      email,
+      password,
+      memberType: 'Silver',
+      points: 0,
+      bookings: 0,
+      miles: 0,
+      contactNumber,
+    };
+    dispatch(saveRegisterData(user));
+    dispatch(saveUserData(user));
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'HomeScreen' }],
+    });
   };
 
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        flex: 1,
-        padding: 25,
-      }}>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        style={{
-          height: 40,
-          borderWidth: 1,
-          padding: 10,
-          borderRadius: 10,
-        }}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={{
-          marginTop: 25,
-          height: 40,
-          borderWidth: 1,
-          padding: 10,
-          borderRadius: 10,
-        }}
-      />
-
-      <TouchableOpacity
-        onPress={handleRegister}
-        style={{
-          marginTop: 35,
-          backgroundColor: '#cac029',
-          width: '100%',
-          alignItems: 'center',
-          height: 45,
-          justifyContent: 'center',
-          borderRadius: 25,
-        }}>
-        <Text style={{ color: 'white' }}>Register</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <Header title="Create Account" />
+      <Modal visible={isModalVisible} animationType="none" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Calendar
+              onDayPress={handleDateSelect}
+              maxDate={new Date().toISOString().split('T')[0]}
+            />
+          </View>
+        </View>
+      </Modal>
+      <View style={styles.form}>
+        <Dropdown
+          style={styles.dropdown}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={[
+            { label: 'Mr', value: '1' },
+            { label: 'Mrs', value: '2' },
+            { label: 'Dr', value: '3' },
+            { label: 'Prof.', value: '4' },
+            { label: 'Ms', value: '5' },
+            { label: 'Mrs', value: '6' },
+          ]}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={'Title'}
+          value={title}
+          onChange={({ value }) => setTitle(value)}
+        />
+        <TextInput
+          placeholder="First name"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Last name"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+        />
+        <TextInput
+          onFocus={() => setIsModalVisible(true)}
+          placeholder="Date of birth"
+          value={dob !== '' ? formatDateDob(dob) : dob}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Contact  Number"
+          value={contactNumber}
+          onChangeText={setContactNumber}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+        />
+        <TouchableOpacity
+          onPress={handleRegister}
+          style={styles.registerButton}>
+          <Text style={styles.registerButtonText}>Register</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  form: {
+    flex: 1,
+    padding: 25,
+    backgroundColor: '#fff',
+  },
+  dropdown: {
+    borderWidth: 1,
+    marginVertical: 10,
+    padding: 10,
+    borderColor: '#000',
+    borderRadius: 10,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  registerButton: {
+    marginTop: 35,
+    backgroundColor: '#cac029',
+    width: '100%',
+    alignItems: 'center',
+    height: 45,
+    justifyContent: 'center',
+    borderRadius: 25,
+  },
+  registerButtonText: {
+    color: 'white',
+  },
+});
 
 export default RegisterScreen;

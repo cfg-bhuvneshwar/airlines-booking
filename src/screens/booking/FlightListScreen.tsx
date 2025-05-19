@@ -1,19 +1,39 @@
 import { useEffect, useState } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  FlatList,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  StyleSheet,
+} from 'react-native';
 import flights from '../../data/flights.json';
 import { FlightListScreenProps } from '../../navigation/types';
+import { formatDate } from '../../utils/Utils';
+import { Colors } from '../../common/constants/Colors';
+import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
+import {
+  saveCurrentBookingData,
+  selectCurrentBooking,
+} from '../../state/flightSlice';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../common/components/Header';
 
 const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
+  const dispatch = useAppDispatch();
+  const currentBookingData = useAppSelector(selectCurrentBooking);
+
   const {
     fromAirportCode,
     toAirportCode,
     fromCity,
     toCity,
-    date,
+    startDate,
+    endDate,
     cabin,
     adults,
     children,
     infantsWithSeats,
+    infants,
   } = route.params;
 
   const [selectedCabin, setSelectedCabin] = useState(cabin);
@@ -34,68 +54,117 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
         flight.fromAirportCode === fromAirportCode &&
         flight.toAirportCode === toAirportCode,
     );
-    console.log(flightss);
-
     setFilteredFlights(flightss);
-  }, [fromAirportCode, toAirportCode]);
+  }, [dispatch, fromAirportCode, toAirportCode]);
 
   const renderItem = ({ item }: any) => {
     let totalFare =
       selectedCabin === 'Economy' ? item.economyFare : item.businessFare;
-    console.log('before: ' + totalFare);
-    console.log('', adults + children + infantsWithSeats);
-
     totalFare = totalFare * (adults + children + infantsWithSeats);
-    console.log(totalFare);
 
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          navigation.navigate('GuestInfoScreen');
+          if (endDate === '') {
+            dispatch(
+              saveCurrentBookingData({
+                oneway: {
+                  flightId: item.flightId,
+                  departureTime: item.departureTime,
+                  arrivalTime: item.arrivalTime,
+                  numberOfStops: item.numberOfStops,
+                  timeDuration: item.timeDuration,
+                  fromAirportCode: item.fromAirportCode,
+                  toAirportCode: item.toAirportCode,
+                  economyFare: item.economyFare,
+                  businessFare: item.businessFare,
+                  cabin: selectedCabin,
+                  date: startDate,
+                  adults,
+                  children,
+                  infantsWithSeats,
+                  totalFare,
+                  miles: item.miles,
+                },
+              }),
+            );
+            navigation.navigate('GuestInfoScreen');
+          } else {
+            if (
+              currentBookingData &&
+              currentBookingData.oneway &&
+              Object.keys(currentBookingData.oneway).length > 0
+            ) {
+              dispatch(
+                saveCurrentBookingData({
+                  roundTrip: {
+                    flightId: item.flightId,
+                    departureTime: item.departureTime,
+                    arrivalTime: item.arrivalTime,
+                    numberOfStops: item.numberOfStops,
+                    timeDuration: item.timeDuration,
+                    fromAirportCode: item.fromAirportCode,
+                    toAirportCode: item.toAirportCode,
+                    economyFare: item.economyFare,
+                    businessFare: item.businessFare,
+                    cabin: selectedCabin,
+                    adults,
+                    date: startDate,
+                    children,
+                    infantsWithSeats,
+                    totalFare,
+                    miles: item.miles,
+                  },
+                }),
+              );
+              navigation.navigate('GuestInfoScreen');
+            } else {
+              dispatch(
+                saveCurrentBookingData({
+                  oneway: {
+                    flightId: item.flightId,
+                    departureTime: item.departureTime,
+                    arrivalTime: item.arrivalTime,
+                    numberOfStops: item.numberOfStops,
+                    timeDuration: item.timeDuration,
+                    fromAirportCode: item.fromAirportCode,
+                    toAirportCode: item.toAirportCode,
+                    economyFare: item.economyFare,
+                    businessFare: item.businessFare,
+                    cabin: selectedCabin,
+                    date: startDate,
+                    adults,
+                    children,
+                    infantsWithSeats,
+                    totalFare,
+                    miles: item.miles,
+                  },
+                }),
+              );
+              navigation.replace('FlightListScreen', {
+                fromCity: toCity,
+                toCity: fromCity,
+                fromAirportCode: toAirportCode,
+                toAirportCode: fromAirportCode,
+                cabin: cabin,
+                startDate: endDate,
+                endDate: startDate,
+                adults,
+                children,
+                infantsWithSeats,
+                infants,
+              });
+            }
+          }
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: 'white',
-            marginVertical: 5,
-            borderRadius: 10,
-          }}>
-          <View style={{ width: '60%', justifyContent: 'center', margin: 10 }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                padding: 5,
-              }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: '#000',
-                }}>
-                {item.departureTime}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 15,
-                }}>
-                -----------------------
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: '#000',
-                }}>
-                {item.arrivalTime}
-              </Text>
+        <View style={styles.flightCard}>
+          <View style={styles.flightDetails}>
+            <View style={styles.flightTimes}>
+              <Text style={styles.flightTimeText}>{item.departureTime}</Text>
+              <Text style={styles.flightDuration}>-----------------------</Text>
+              <Text style={styles.flightTimeText}>{item.arrivalTime}</Text>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingHorizontal: 5,
-              }}>
+            <View style={styles.flightInfo}>
               <Text>{item.fromAirportCode}</Text>
               <Text>{`${
                 item.numberOfStops > 1
@@ -105,30 +174,9 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
               <Text>{item.toAirportCode}</Text>
             </View>
           </View>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              backgroundColor: '#e1e1e1',
-              padding: 10,
-              alignItems: 'center',
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: 12,
-              }}>
-              From INR
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: '#000',
-              }}>
-              {totalFare}
-            </Text>
+          <View style={styles.fareContainer}>
+            <Text style={styles.fareLabel}>From INR</Text>
+            <Text style={styles.fareAmount}>{totalFare}</Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -136,89 +184,150 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#e9e9e9', padding: 15 }}>
-      <Text style={{ fontSize: 17 }}>{`${fromCity} -> ${toCity}`}</Text>
-      <Text style={{ marginTop: 10, fontSize: 15 }}>{date}</Text>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <Header title="Flights" />
+      <View style={styles.content}>
+        <Text style={styles.routeText}>{`${fromCity} -> ${toCity}`}</Text>
+        <Text style={styles.dateText}>{formatDate(startDate)}</Text>
+        <Text style={styles.dateText}>
+          {endDate === ''
+            ? '(Outbound Flight)'
+            : currentBookingData &&
+              currentBookingData.oneway &&
+              Object.keys(currentBookingData.oneway).length > 0
+            ? '(Return Flight)'
+            : '(Outbound Flight)'}
+        </Text>
 
-      {selectedCabin === 'Economy' ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            borderRadius: 20,
-            borderWidth: 1,
-            height: 35,
-            borderColor: '#000',
-            marginVertical: 20,
-          }}>
-          <View
-            style={{
-              backgroundColor: '#213650',
-              width: '50%',
-              borderRadius: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{ color: 'white' }}>Economy</Text>
-          </View>
-          <TouchableWithoutFeedback
-            onPress={() => setSelectedCabin('Business')}>
-            <View
-              style={{
-                width: '50%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text>Business</Text>
+        {selectedCabin === 'Economy' ? (
+          <View style={styles.cabinSelector}>
+            <View style={styles.activeCabin}>
+              <Text style={styles.activeCabinText}>Economy</Text>
             </View>
-          </TouchableWithoutFeedback>
-        </View>
-      ) : (
-        <View
-          style={{
-            flexDirection: 'row',
-            borderRadius: 20,
-            borderWidth: 1,
-            height: 35,
-            borderColor: '#000',
-            marginVertical: 20,
-          }}>
-          <TouchableWithoutFeedback onPress={() => setSelectedCabin('Economy')}>
-            <View
-              style={{
-                width: '50%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text>Economy</Text>
-            </View>
-          </TouchableWithoutFeedback>
-          <View
-            style={{
-              backgroundColor: '#213650',
-              width: '50%',
-              borderRadius: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{ color: 'white' }}>Business</Text>
+            <TouchableWithoutFeedback
+              onPress={() => setSelectedCabin('Business')}>
+              <View style={styles.inactiveCabin}>
+                <Text>Business</Text>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
-      )}
+        ) : (
+          <View style={styles.cabinSelector}>
+            <TouchableWithoutFeedback
+              onPress={() => setSelectedCabin('Economy')}>
+              <View style={styles.inactiveCabin}>
+                <Text>Economy</Text>
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.activeCabin}>
+              <Text style={styles.activeCabinText}>Business</Text>
+            </View>
+          </View>
+        )}
 
-      {filteredFlights.length > 0 ? (
-        <FlatList data={filteredFlights} renderItem={renderItem} />
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text>No flight available!!</Text>
-        </View>
-      )}
-    </View>
+        {filteredFlights.length > 0 ? (
+          <FlatList data={filteredFlights} renderItem={renderItem} />
+        ) : (
+          <View style={styles.noFlightsContainer}>
+            <Text>No flight available!!</Text>
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  content: {
+    flex: 1,
+    backgroundColor: '#e9f4f4',
+    padding: 15,
+  },
+  routeText: {
+    fontSize: 17,
+  },
+  dateText: {
+    marginTop: 10,
+    fontSize: 15,
+  },
+  cabinSelector: {
+    flexDirection: 'row',
+    borderRadius: 20,
+    borderWidth: 1,
+    height: 35,
+    borderColor: '#000',
+    marginVertical: 20,
+  },
+  activeCabin: {
+    backgroundColor: '#213650',
+    width: '50%',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeCabinText: {
+    color: 'white',
+  },
+  inactiveCabin: {
+    width: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flightCard: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    marginVertical: 5,
+    borderRadius: 10,
+  },
+  flightDetails: {
+    width: '60%',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  flightTimes: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 5,
+  },
+  flightTimeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  flightDuration: {
+    fontSize: 15,
+  },
+  flightInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
+  },
+  fareContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#e1e1e1',
+    padding: 10,
+    alignItems: 'center',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  fareLabel: {
+    fontSize: 12,
+  },
+  fareAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  noFlightsContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default FlightListScreen;

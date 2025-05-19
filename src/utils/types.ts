@@ -1,8 +1,16 @@
 export interface UserData {
   uid: string;
-  name: string;
-  image_url: string;
-  email?: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  contactNumber: string;
+  password?: string;
+  memberType: 'Silver' | 'Gold' | 'Platinum' | '';
+  points: number;
+  bookings: number;
+  miles: number;
 }
 
 export interface RecentSearchData {
@@ -10,12 +18,60 @@ export interface RecentSearchData {
   toCity: string;
   fromAirportCode: string;
   toAirportCode: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   cabin: string;
   adults: number;
   children: number;
   infants: number;
   infantsWithSeats: number;
+}
+
+export interface BookingData {
+  flightId: string;
+  departureTime: string; // Changed to string for time representation
+  arrivalTime: string; // Changed to string for time representation
+  numberOfStops: number; // Changed to number
+  timeDuration: string; // Changed to string for duration representation
+  fromAirportCode: string; // Changed to string
+  toAirportCode: string; // Changed to string
+  economyFare: number; // Changed to number
+  businessFare: number;
+  cabin: string;
+  adults: number;
+  children: number;
+  infantsWithSeats: number;
+  totalFare: number;
+  date: string;
+  seats?: number[];
+  miles: number;
+}
+
+export interface CurrentBookingData {
+  oneway?: BookingData;
+  roundTrip?: BookingData;
+  guestInformation?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    title: string;
+  }[];
+  contactNumber?: string;
+  email?: string;
+}
+
+export interface FinalBookingData {
+  userId: string;
+  bookingId: string;
+  bookingDate: number;
+  oneway?: BookingData;
+  roundTrip?: BookingData;
+  totalFare: number;
+  paymentMethod: string;
+  cardDetails: {};
+  guestsInformation: [];
+  contactNumber: string;
+  email: string;
 }
 
 export type MyCallback = () => void;

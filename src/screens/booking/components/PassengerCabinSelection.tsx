@@ -1,4 +1,4 @@
-import { Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
 
 const PassengerCabinSelection = ({
   adults,
@@ -10,16 +10,8 @@ const PassengerCabinSelection = ({
 }: any) => {
   return (
     <TouchableWithoutFeedback onPress={onHandleGuestModalPress}>
-      <View
-        style={{
-          backgroundColor: 'white',
-          borderRadius: 10,
-          marginVertical: 10,
-          justifyContent: 'center',
-          paddingHorizontal: 15,
-          height: 50,
-        }}>
-        <Text style={{ fontSize: 15 }}>{`${
+      <View style={styles.container}>
+        <Text style={styles.text}>{`${
           adults + children + infants + infantsWithSeats
         } ${
           adults + children + infants + infantsWithSeats > 1
@@ -30,5 +22,19 @@ const PassengerCabinSelection = ({
     </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginVertical: 10,
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    height: 50,
+  },
+  text: {
+    fontSize: 15,
+  },
+});
 
 export default PassengerCabinSelection;

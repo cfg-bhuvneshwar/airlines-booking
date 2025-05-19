@@ -37,4 +37,5 @@ export const Colors = {
   modalOverlayButton: '#007BFF',
   modalOverlayButtonText: '#FFFFFF',
   modalOverlayBorder: '#CCCCCC',
+  disabledButton: '#d3d3d3',
 };

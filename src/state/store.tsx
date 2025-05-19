@@ -12,27 +12,37 @@ import {
 } from 'redux-persist';
 import { userSliceReducer } from './userSlice';
 import { flightSliceReducer } from './flightSlice';
+import { bookingSliceReducer } from './bookingSlice';
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  blacklist: ['flight'],
 };
 
 const userPersistConfig = {
   key: 'user',
   storage: AsyncStorage,
-  whitelist: ['user'],
+  whitelist: ['user', 'registerData'],
 };
 
 const flightPersistConfig = {
   key: 'flight',
   storage: AsyncStorage,
   whitelist: ['recentSearch'],
+  blacklist: ['currentBooking'],
+};
+
+const bookingPersistConfig = {
+  key: 'booking',
+  storage: AsyncStorage,
+  whitelist: ['bookings'],
 };
 
 const dynamicReducer = {
   user: persistReducer(userPersistConfig, userSliceReducer),
   flight: persistReducer(flightPersistConfig, flightSliceReducer),
+  booking: persistReducer(bookingPersistConfig, bookingSliceReducer),
 };
 const persistedReducer = persistReducer(
   persistConfig,

@@ -10,7 +10,8 @@ export type RootStackParamList = {
     toCity: string;
     fromAirportCode: string;
     toAirportCode: string;
-    date: string;
+    startDate: string;
+    endDate: string;
     cabin: string;
     adults: number;
     children: number;
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   SeatSelectionScreen: undefined;
   GuestInfoScreen: undefined;
   PaymentScreen: undefined;
+  PreLoginScreen: undefined;
 };
 
 export type SplashScreenProps = NativeStackScreenProps<
@@ -60,4 +62,9 @@ export type GuestInfoScreenProps = NativeStackScreenProps<
 export type PaymentScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'PaymentScreen'
+>;
+
+export type PreLoginScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'PreLoginScreen'
 >;
