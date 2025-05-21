@@ -17,6 +17,7 @@ import {
 import SeatSelection from './components/SeatSelection';
 import Header from '../../common/components/Header';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BookingData } from '../../utils/types';
 
 const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   navigation,
@@ -87,7 +88,13 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
               ...{
                 seats: onwardSelectedSeats,
               },
-            },
+            } as BookingData,
+            roundTrip: {
+              ...currentBooking.roundTrip,
+              ...{
+                seats: returnSelectedSeats,
+              },
+            } as BookingData,
           }),
         );
         navigation.navigate('PaymentScreen');
@@ -100,7 +107,13 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
             ...{
               seats: returnSelectedSeats,
             },
-          },
+          } as BookingData,
+          oneway: {
+            ...currentBooking.oneway,
+            ...{
+              seats: onwardSelectedSeats,
+            },
+          } as BookingData,
         }),
       );
       navigation.navigate('PaymentScreen');

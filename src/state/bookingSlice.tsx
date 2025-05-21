@@ -7,7 +7,7 @@ interface BookingState {
 }
 
 const initialState: BookingState = {
-  bookings: [], // Initial state as an empty array
+  bookings: [],
 };
 
 const bookingSlice = createSlice({
@@ -24,10 +24,8 @@ export const { saveBookingData } = bookingSlice.actions;
 
 export const selectBookingData = (state: RootState) => {
   const uid = state.user.user.uid;
-  let bookings = [];
   if (uid !== '') {
-    bookings = state.booking.bookings.filter(booking => booking.userId === uid);
-    return bookings;
+    return state.booking.bookings.filter(booking => booking.userId === uid);
   }
 
   return state.booking.bookings.filter(booking => booking.userId === '');

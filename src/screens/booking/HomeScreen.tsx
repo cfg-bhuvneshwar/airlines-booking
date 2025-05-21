@@ -6,8 +6,9 @@ import ProfileTab from './tabs/ProfileTab';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native';
+import { RootTabParamList } from '../../navigation/types';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const HomeScreen = () => {
   return (
@@ -19,7 +20,6 @@ const HomeScreen = () => {
             component={HomeTab}
             options={{ headerShown: false }}
           />
-
           <Tab.Screen
             name="Book"
             component={BookTab}

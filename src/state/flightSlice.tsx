@@ -56,7 +56,11 @@ const flightSlice = createSlice({
       action: PayloadAction<CurrentBookingData>,
     ) => {
       if (Object.keys(action.payload).length > 0) {
-        if ('oneway' in action.payload) {
+        if ('oneway' in action.payload && 'roundTrip' in action.payload) {
+          state.currentBooking.oneway = action.payload.oneway as BookingData;
+          state.currentBooking.roundTrip = action.payload
+            .roundTrip as BookingData;
+        } else if ('oneway' in action.payload) {
           state.currentBooking.oneway = action.payload.oneway as BookingData;
         } else if ('roundTrip' in action.payload) {
           state.currentBooking.roundTrip = action.payload

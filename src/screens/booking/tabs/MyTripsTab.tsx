@@ -11,10 +11,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+type Booking = {
+  oneway?: {
+    fromAirportCode: string;
+    toAirportCode: string;
+    departureTime: string;
+    arrivalTime: string;
+    cabin: string;
+  };
+  roundTrip?: {
+    fromAirportCode: string;
+    toAirportCode: string;
+    departureTime: string;
+    arrivalTime: string;
+    cabin: string;
+  };
+  totalFare: number;
+};
+
 const MyTripsTab = () => {
   const bookingData = useAppSelector(selectBookingData);
 
-  const renderItem = ({ item }: any) => (
+  const renderItem = ({ item }: { item: Booking }) => (
     <View style={styles.bookingItem}>
       {/* Oneway Trip Details */}
       {item.oneway && (

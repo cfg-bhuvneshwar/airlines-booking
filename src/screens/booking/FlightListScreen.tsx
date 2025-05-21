@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View,
   StyleSheet,
+  ListRenderItem,
 } from 'react-native';
 import flights from '../../data/flights.json';
 import { FlightListScreenProps } from '../../navigation/types';
@@ -17,6 +18,19 @@ import {
 } from '../../state/flightSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
+
+type Flight = {
+  flightId: string;
+  departureTime: string;
+  arrivalTime: string;
+  numberOfStops: number;
+  timeDuration: string;
+  fromAirportCode: string;
+  toAirportCode: string;
+  economyFare: number;
+  businessFare: number;
+  miles: number;
+};
 
 const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
   const dispatch = useAppDispatch();
@@ -57,7 +71,7 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
     setFilteredFlights(flightss);
   }, [dispatch, fromAirportCode, toAirportCode]);
 
-  const renderItem = ({ item }: any) => {
+  const renderItem: ListRenderItem<Flight> = ({ item }) => {
     let totalFare =
       selectedCabin === 'Economy' ? item.economyFare : item.businessFare;
     totalFare = totalFare * (adults + children + infantsWithSeats);

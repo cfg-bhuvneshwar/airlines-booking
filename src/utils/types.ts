@@ -13,6 +13,14 @@ export interface UserData {
   miles: number;
 }
 
+// export interface UpdateUserData {
+//   uid: string;
+//   memberType: 'Silver' | 'Gold' | 'Platinum' | '';
+//   points: number;
+//   bookings: number;
+//   miles: number;
+// }
+
 export interface RecentSearchData {
   fromCity: string;
   toCity: string;
@@ -29,13 +37,13 @@ export interface RecentSearchData {
 
 export interface BookingData {
   flightId: string;
-  departureTime: string; // Changed to string for time representation
-  arrivalTime: string; // Changed to string for time representation
-  numberOfStops: number; // Changed to number
-  timeDuration: string; // Changed to string for duration representation
-  fromAirportCode: string; // Changed to string
-  toAirportCode: string; // Changed to string
-  economyFare: number; // Changed to number
+  departureTime: string;
+  arrivalTime: string;
+  numberOfStops: number;
+  timeDuration: string;
+  fromAirportCode: string;
+  toAirportCode: string;
+  economyFare: number;
   businessFare: number;
   cabin: string;
   adults: number;

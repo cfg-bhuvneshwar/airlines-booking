@@ -1,6 +1,20 @@
+import { memo } from 'react';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 
-const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: any) => {
+type SeatProps = {
+  seat: {
+    seatNumber: number;
+    status: 'available' | 'unavailable' | 'selected';
+  }; // Represents the seat details
+  onSelect: (seatNumber: number) => void; // Callback when a seat is selected
+  rowIndex: number; // The row index of the seat
+  selectedSeat: {
+    seatNumber: number;
+    status: 'available' | 'unavailable' | 'selected';
+  }; // Represents the currently selected seat
+};
+
+const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: SeatProps) => {
   const seatStyle = [
     styles.seat,
     seat.status === 'available' && styles.availableSeat,
@@ -17,7 +31,7 @@ const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: any) => {
         <Text style={styles.seatLabel}>B</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 3 ? (
-        <Text style={[styles.seatLabel, styles.seatLabelMarginRight]}>C</Text>
+        <Text style={[styles.seatLabel]}>C</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 4 ? (
         <Text style={styles.seatLabel}>D</Text>
@@ -91,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Seat;
+export default memo(Seat);

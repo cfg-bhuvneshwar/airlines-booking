@@ -1,7 +1,8 @@
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { PreLoginScreenProps } from '../../navigation/types';
 
-const PreLoginScreen = ({ navigation }: any) => {
+const PreLoginScreen = ({ navigation }: PreLoginScreenProps) => {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.contentContainer}>

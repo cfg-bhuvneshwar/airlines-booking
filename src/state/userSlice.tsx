@@ -36,10 +36,29 @@ const userSlice = createSlice({
       arr.push(action.payload);
       state.registerData = arr;
     },
+    updateRegisterData: (state, action: PayloadAction<UserData>) => {
+      const registerArr = state.registerData;
+      let payload = action.payload;
+      let userData = registerArr.find(
+        ({ uid }) => uid === payload.uid,
+      ) as UserData;
+      const index = registerArr.findIndex(
+        ({ uid }) => uid === payload.uid,
+      ) as number;
+      userData.memberType = payload.memberType;
+      userData.points = payload.points;
+      userData.bookings = payload.bookings;
+      userData.miles = payload.miles;
+      console.log('userData : ', userData);
+      registerArr[index] = userData;
+      console.log('registerArr : ', registerArr);
+      state.registerData = registerArr;
+    },
   },
 });
 
-export const { saveUserData, saveRegisterData } = userSlice.actions;
+export const { saveUserData, saveRegisterData, updateRegisterData } =
+  userSlice.actions;
 
 export const selectUserData = (state: RootState) => state.user.user;
 export const selectRegisterData = (state: RootState) => state.user.registerData;

@@ -1,4 +1,14 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { memo } from 'react';
+import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+
+type GuestsSelectionProps = {
+  title: string;
+  subTitle?: string;
+  onPressMinus: (value: number) => void;
+  onPressPlus: (value: number) => void;
+  value: number;
+  styles?: StyleProp<ViewStyle>;
+};
 
 const GuestsSelection = ({
   title,
@@ -7,7 +17,7 @@ const GuestsSelection = ({
   onPressPlus,
   value,
   styles: customStyles,
-}: any) => {
+}: GuestsSelectionProps) => {
   return (
     <View style={[styles.container, customStyles]}>
       <View style={styles.textContainer}>
@@ -78,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GuestsSelection;
+export default memo(GuestsSelection);

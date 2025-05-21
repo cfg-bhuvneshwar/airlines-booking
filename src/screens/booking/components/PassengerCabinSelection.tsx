@@ -1,4 +1,14 @@
+import { memo } from 'react';
 import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
+
+type PassengerCabinSelectionProps = {
+  adults: number;
+  children: number;
+  infants: number;
+  infantsWithSeats: number;
+  cabin: string;
+  onHandleGuestModalPress: () => void;
+};
 
 const PassengerCabinSelection = ({
   adults,
@@ -7,7 +17,7 @@ const PassengerCabinSelection = ({
   infantsWithSeats,
   cabin,
   onHandleGuestModalPress,
-}: any) => {
+}: PassengerCabinSelectionProps) => {
   return (
     <TouchableWithoutFeedback onPress={onHandleGuestModalPress}>
       <View style={styles.container}>
@@ -37,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PassengerCabinSelection;
+export default memo(PassengerCabinSelection);

@@ -1,12 +1,29 @@
 import moment from 'moment';
 import { Alert, Platform, ToastAndroid } from 'react-native';
 
+type FareCalculationParams = {
+  cabin: 'Economy' | 'Business';
+  economyFare: number;
+  businessFare: number;
+  adults: number;
+  children: number;
+  infantsWithSeats: number;
+};
+
+type TripFare = {
+  totalFare: number;
+};
+
+type TotalFareCalculationParams = {
+  oneway: TripFare;
+  roundTrip: TripFare;
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const month = date.toLocaleString('default', {
     month: 'short',
   });
-
   const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   let dayOfWeek = weekday[date.getDay()];
   const day = date.getDate();
@@ -33,13 +50,16 @@ const calculateFare = ({
   adults,
   children,
   infantsWithSeats,
-}: any) => {
+}: FareCalculationParams) => {
   let totalFare = cabin === 'Economy' ? economyFare : businessFare;
   totalFare = totalFare * (adults + children + infantsWithSeats);
   return totalFare;
 };
 
-const calculateTotalFare = ({ oneway, roundTrip }: any) => {
+const calculateTotalFare = ({
+  oneway,
+  roundTrip,
+}: TotalFareCalculationParams) => {
   if (Object.keys(roundTrip).length > 0) {
     return oneway.totalFare + roundTrip.totalFare;
   }

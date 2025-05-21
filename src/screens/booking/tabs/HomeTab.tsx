@@ -12,8 +12,6 @@ import Header from '../../../common/components/Header';
 import { useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-// const { width } = Dimensions.get('window');
-
 const { width } = Dimensions.get('window');
 const data = [
   {
@@ -56,22 +54,16 @@ const data = [
 // ];
 
 const Home = () => {
-  // const renderBanner = ({ item }: any) => (
-  //   <View style={styles.bannerContainer}>
-  //     {/* <Image source={item.image} style={styles.bannerImage} /> */}
-  //   </View>
-  // );
-
   const [current, setCurrent] = useState(0);
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
-  const handleScroll = event => {
+  const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     setCurrent(index);
   };
 
-  const handleDotPress = index => {
+  const handleDotPress = (index: number) => {
     setCurrent(index);
     scrollViewRef.current?.scrollTo({
       x: index * width,

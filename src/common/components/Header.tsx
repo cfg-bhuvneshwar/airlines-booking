@@ -1,8 +1,13 @@
 import { Text, View, StyleSheet } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { fontFamilies } from '../constants/fontFamily';
+import { memo } from 'react';
 
-const Header = ({ title }: any) => {
+type HeaderProps = {
+  title: string;
+};
+
+const Header = ({ title }: HeaderProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -24,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Header;
+export default memo(Header);

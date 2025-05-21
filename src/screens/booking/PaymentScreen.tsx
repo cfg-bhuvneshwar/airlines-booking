@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import PaymentMethodSelection from './components/PaymentMethodSelection';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Colors } from '../../common/constants/Colors';
 import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
 import { saveBookingData } from '../../state/bookingSlice';
@@ -21,15 +21,22 @@ import {
   saveCurrentBookingData,
   selectCurrentBooking,
 } from '../../state/flightSlice';
-import { saveUserData, selectUserData } from '../../state/userSlice';
+import {
+  saveUserData,
+  selectUserData,
+  updateRegisterData,
+} from '../../state/userSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
+import { PaymentScreenProps } from '../../navigation/types';
 
-const PaymentScreen = ({ navigation }: any) => {
+const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
   const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const currentBooking = useAppSelector(selectCurrentBooking);
   const userData = useAppSelector(selectUserData);
+
+  console.log('currentBooking : ', currentBooking);
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState('Credit/Debit');
@@ -40,10 +47,30 @@ const PaymentScreen = ({ navigation }: any) => {
   const [expiryYear, setExpiryYear] = useState('');
   const [cvv, setCvv] = useState('');
 
-  const submitBooking = () => {
+  const submitBooking = useCallback(() => {
     if (userData.uid !== '') {
-      let currentBookingPoints =
-        ((currentBooking.oneway?.miles as number) * 10) / 100;
+      // calculate points
+      let currentBookingPoints = 0;
+      if (currentBooking.oneway && currentBooking.roundTrip) {
+        currentBookingPoints =
+          ((currentBooking.oneway?.miles as number) * 10) / 100 +
+          ((currentBooking.roundTrip?.miles as number) * 10) / 100;
+      } else {
+        currentBookingPoints =
+          ((currentBooking.oneway?.miles as number) * 10) / 100;
+      }
+
+      // calculate miles
+      let totalMiles = 0;
+      if (currentBooking.oneway && currentBooking.roundTrip) {
+        totalMiles =
+          (currentBooking.oneway?.miles as number) +
+          (currentBooking.roundTrip?.miles as number);
+      } else {
+        totalMiles = currentBooking.oneway?.miles as number;
+      }
+
+      // identify member type
       let memberType = userData.memberType;
       if (userData.miles + (currentBooking.oneway?.miles ?? 0) >= 40000) {
         memberType = 'Platinum';
@@ -53,7 +80,16 @@ const PaymentScreen = ({ navigation }: any) => {
       dispatch(
         saveUserData({
           ...userData,
-          miles: currentBooking.oneway?.miles || 0,
+          miles: totalMiles,
+          bookings: userData.bookings + 1,
+          points: userData.points + currentBookingPoints,
+          memberType,
+        }),
+      );
+      dispatch(
+        updateRegisterData({
+          ...userData,
+          miles: totalMiles,
           bookings: userData.bookings + 1,
           points: userData.points + currentBookingPoints,
           memberType,
@@ -93,7 +129,22 @@ const PaymentScreen = ({ navigation }: any) => {
       index: 0,
       routes: [{ name: 'HomeScreen' }],
     });
-  };
+  }, [
+    cardNumber,
+    currentBooking.contactNumber,
+    currentBooking.email,
+    currentBooking.guestInformation,
+    currentBooking.oneway,
+    currentBooking.roundTrip,
+    cvv,
+    dispatch,
+    expiryMonth,
+    expiryYear,
+    name,
+    navigation,
+    selectedPaymentMethod,
+    userData,
+  ]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>

@@ -1,9 +1,22 @@
 import { StyleSheet, View } from 'react-native';
 import Seat from './Seat';
+import { memo } from 'react';
 
-const SeatRow = ({ row, onSelect, index, selectedSeats }: any) => (
+type Seat = {
+  seatNumber: number;
+  status: 'available' | 'unavailable' | 'selected';
+};
+
+type SeatRowProps = {
+  row: Seat[]; // Array of seats in the row
+  onSelect: (seatNumber: number) => void; // Callback when a seat is selected
+  index: number; // Index of the row
+  selectedSeats: number[]; // Array of selected seat numbers
+};
+
+const SeatRow = ({ row, onSelect, index, selectedSeats }: SeatRowProps) => (
   <View style={styles.row}>
-    {row.map((seat: any) => {
+    {row.map((seat: Seat) => {
       return (
         <View key={seat.seatNumber}>
           <Seat
@@ -13,8 +26,8 @@ const SeatRow = ({ row, onSelect, index, selectedSeats }: any) => (
             rowIndex={index}
             selectedSeat={
               selectedSeats.includes(seat.seatNumber)
-                ? { status: 'selected' }
-                : {}
+                ? { status: 'selected', seatNumber: seat.seatNumber }
+                : { status: 'available', seatNumber: seat.seatNumber }
             }
           />
         </View>
@@ -51,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SeatRow;
+export default memo(SeatRow);

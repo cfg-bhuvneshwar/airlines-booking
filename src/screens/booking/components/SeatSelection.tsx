@@ -16,7 +16,6 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
   seats,
   selectedSeats,
   onSelect,
-  totalPassengers,
   onConfirm,
   isConfirmDisabled,
 }) => {

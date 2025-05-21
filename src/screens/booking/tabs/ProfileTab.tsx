@@ -2,13 +2,20 @@ import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../../common/constants/Colors';
 import { useAppSelector, useAppDispatch } from '../../../common/hooks/hooks';
-import { selectUserData, saveUserData } from '../../../state/userSlice';
+import {
+  selectUserData,
+  saveUserData,
+  selectRegisterData,
+} from '../../../state/userSlice';
 import Header from '../../../common/components/Header';
 import { fontFamilies } from '../../../common/constants/fontFamily';
 
 const ProfileTab = ({ navigation }: any) => {
-  const userData = useAppSelector(selectUserData);
   const dispatch = useAppDispatch();
+
+  const userData = useAppSelector(selectUserData);
+  const registerData = useAppSelector(selectRegisterData);
+  console.log('regiterData : ', registerData);
 
   const handleLogout = () => {
     dispatch(
@@ -75,6 +82,7 @@ const ProfileTab = ({ navigation }: any) => {
                 {userData.memberType} Member
               </Text>
               <Text style={styles.pointsText}>{userData.points} Points</Text>
+              <Text style={styles.pointsText}>{userData.miles} miles</Text>
             </View>
           </View>
           <TouchableOpacity onPress={handleLogout} style={styles.loginButton}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -13,14 +13,16 @@ import { useAppDispatch } from '../../common/hooks/hooks';
 import { saveRegisterData, saveUserData } from '../../state/userSlice';
 import { Text } from '@react-navigation/elements';
 import { Colors } from '../../common/constants/Colors';
-import { Dropdown } from 'react-native-element-dropdown';
+
 import { Calendar } from 'react-native-calendars';
 import { formatDateDob, generate16DigitId } from '../../utils/Utils';
 import Header from '../../common/components/Header';
+import TitleSelection from '../../common/components/TitleSelection';
 
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const dispatch = useAppDispatch();
 
+  const maxDate = useRef(new Date().toISOString().split('T')[0]);
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [title, setTitle] = useState('');
@@ -28,15 +30,14 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [lastName, setLastName] = useState('');
   const [dob, setDob] = useState('');
   const [password, setPassword] = useState('');
-
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleDateSelect = (date: any) => {
+  const handleDateSelect = useCallback((date: any) => {
     setDob(date.dateString);
     setIsModalVisible(false);
-  };
+  }, []);
 
-  const handleRegister = async () => {
+  const handleRegister = useCallback(async () => {
     const user: UserData = {
       uid: generate16DigitId(),
       title,
@@ -57,39 +58,39 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       index: 0,
       routes: [{ name: 'HomeScreen' }],
     });
-  };
+  }, [
+    title,
+    firstName,
+    lastName,
+    dob,
+    email,
+    password,
+    contactNumber,
+    dispatch,
+    navigation,
+  ]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Header title="Create Account" />
-      <Modal visible={isModalVisible} animationType="none" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Calendar
-              onDayPress={handleDateSelect}
-              maxDate={new Date().toISOString().split('T')[0]}
-            />
+      {isModalVisible && (
+        <Modal visible={isModalVisible} animationType="none" transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Calendar
+                onDayPress={handleDateSelect}
+                maxDate={maxDate.current}
+              />
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
       <View style={styles.form}>
-        <Dropdown
-          style={styles.dropdown}
+        <TitleSelection
+          title={title}
+          onChange={({ label }: { label: string }) => setTitle(label)}
+          dropdown={styles.dropdown}
           selectedTextStyle={styles.selectedTextStyle}
-          data={[
-            { label: 'Mr', value: '1' },
-            { label: 'Mrs', value: '2' },
-            { label: 'Dr', value: '3' },
-            { label: 'Prof.', value: '4' },
-            { label: 'Ms', value: '5' },
-            { label: 'Mrs', value: '6' },
-          ]}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={'Title'}
-          value={title}
-          onChange={({ value }) => setTitle(value)}
         />
         <TextInput
           placeholder="First name"
@@ -116,7 +117,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           style={styles.input}
         />
         <TextInput
-          placeholder="Contact  Number"
+          placeholder="Contact Number"
           value={contactNumber}
           onChangeText={setContactNumber}
           style={styles.input}

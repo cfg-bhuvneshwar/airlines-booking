@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = useCallback(async () => {
     const userData = registerData.find(
       item => item.email === email && item.password === password,
     ) as UserData;
@@ -46,11 +46,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       index: 0,
       routes: [{ name: 'HomeScreen' }],
     });
-  };
-
-  const handleRegister = () => {
-    navigation.replace('RegisterScreen');
-  };
+  }, [dispatch, email, navigation, password, registerData]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
@@ -74,7 +70,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <Text style={{ color: Colors.light }}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={handleRegister}
+          onPress={() => navigation.replace('RegisterScreen')}
           style={styles.registerButton}>
           <Text style={{ color: Colors.dark }}>
             Don't have account Yet? Create Account

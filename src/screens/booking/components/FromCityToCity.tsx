@@ -1,11 +1,24 @@
+import { memo } from 'react';
 import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
+
+type City = {
+  city: string;
+  airportCode: string;
+};
+
+type FromCityToCityProps = {
+  from: City; // Object containing `city` and `airportCode` for the "From" location
+  to: City; // Object containing `city` and `airportCode` for the "To" location
+  onHandleFromModalPress: () => void; // Callback for "From" modal press
+  onHandleToModalPress: () => void; // Callback for "To" modal press
+};
 
 const FromCityToCity = ({
   from,
   to,
   onHandleFromModalPress,
   onHandleToModalPress,
-}: any) => {
+}: FromCityToCityProps) => {
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={onHandleFromModalPress}>
@@ -49,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FromCityToCity;
+export default memo(FromCityToCity);

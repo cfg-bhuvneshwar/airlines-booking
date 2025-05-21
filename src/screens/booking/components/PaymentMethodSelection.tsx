@@ -1,12 +1,20 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { memo } from 'react';
+import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+
+type PaymentMethodSelectionProps = {
+  paymentMethod: string; // The name of the payment method (e.g., "Credit/Debit", "UPI")
+  onPress: (paymentMethod: string) => void; // Callback when a payment method is selected
+  styles?: StyleProp<ViewStyle>; // Optional custom styles for the row
+  selectedPaymentMethod: string; // The currently selected payment method
+};
 
 const PaymentMethodSelection = ({
   paymentMethod,
   onPress,
   styles: customStyles,
   selectedPaymentMethod,
-}: any) => {
+}: PaymentMethodSelectionProps) => {
   return (
     <View style={styles.container}>
       <View style={[styles.row, customStyles]}>
@@ -50,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentMethodSelection;
+export default memo(PaymentMethodSelection);

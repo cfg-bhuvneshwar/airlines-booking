@@ -1,3 +1,4 @@
+import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
@@ -68,3 +69,18 @@ export type PreLoginScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'PreLoginScreen'
 >;
+
+export type RootTabParamList = {
+  Home: undefined;
+  Book: undefined;
+  Trips: undefined;
+  Profile: undefined;
+};
+
+export type HomeRouteProp = RouteProp<RootTabParamList, 'Home'>;
+
+export type BookRouteProp = RouteProp<RootTabParamList, 'Book'>;
+
+export type TripsRouteProp = RouteProp<RootTabParamList, 'Trips'>;
+
+export type ProfileRouteProp = RouteProp<RootTabParamList, 'Profile'>;

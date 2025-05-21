@@ -15,10 +15,10 @@ import { useEffect, useState } from 'react';
 import { GuestInfoScreenProps } from '../../navigation/types';
 import { formatDate, showToastOrAlert } from '../../utils/Utils';
 import { Colors } from '../../common/constants/Colors';
-import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
 import { selectUserData } from '../../state/userSlice';
+import TitleSelection from '../../common/components/TitleSelection';
 
 const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
   const dispatch = useAppDispatch();
@@ -111,23 +111,25 @@ const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
             {textInputs.map((item, index) => (
               <View key={index}>
                 <Text style={styles.inputLabel}>{item.id}</Text>
-                <Dropdown
+                {/* <Dropdown
                   style={styles.dropdown}
                   selectedTextStyle={styles.selectedTextStyle}
-                  data={[
-                    { label: 'Mr', value: '1' },
-                    { label: 'Mrs', value: '2' },
-                    { label: 'Dr', value: '3' },
-                    { label: 'Prof.', value: '4' },
-                    { label: 'Ms', value: '5' },
-                    { label: 'Mrs', value: '6' },
-                  ]}
+                  data={userTitles}
                   maxHeight={300}
                   labelField="label"
                   valueField="label"
                   placeholder={'Title'}
                   value={item.title}
                   onChange={({ label }) => handleTitleChange(item.id, label)}
+                /> */}
+
+                <TitleSelection
+                  title={item.title}
+                  onChange={({ label }: { label: string }) =>
+                    handleTitleChange(item.id, label)
+                  }
+                  dropdown={styles.dropdown}
+                  selectedTextStyle={styles.selectedTextStyle}
                 />
                 <TextInput
                   placeholder="First name"

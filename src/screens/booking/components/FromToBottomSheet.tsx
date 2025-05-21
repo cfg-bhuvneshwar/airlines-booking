@@ -1,8 +1,28 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Colors } from '../../../common/constants/Colors';
 import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
+import { memo, RefObject } from 'react';
 
-const FromToBottomSheet = ({ ref, list, onPress, type }: any) => {
+type CityItem = {
+  city: string;
+  country: string;
+  airportName: string;
+  airportCode: string;
+};
+
+type FromToBottomSheetProps = {
+  ref: RefObject<BottomSheetModal>;
+  list: CityItem[];
+  onPress: (item: CityItem) => void;
+  type: string;
+};
+
+const FromToBottomSheet = ({
+  ref,
+  list,
+  onPress,
+  type,
+}: FromToBottomSheetProps) => {
   return (
     <BottomSheetModal
       ref={ref}
@@ -103,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FromToBottomSheet;
+export default memo(FromToBottomSheet);

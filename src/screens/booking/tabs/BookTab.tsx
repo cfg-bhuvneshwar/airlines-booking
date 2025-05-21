@@ -33,6 +33,14 @@ import moment from 'moment';
 import { formatDate, getDatesBetween } from '../../../utils/Utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+interface MarkedDates {
+  color: string;
+  selected: boolean;
+  textColor: string;
+  startingDay?: boolean;
+  endingDay?: boolean;
+}
+
 const BookTab = ({ navigation }: any) => {
   const dispatch = useAppDispatch();
 
@@ -51,7 +59,9 @@ const BookTab = ({ navigation }: any) => {
     city: '',
     airportCode: '',
   });
-  const [markedDates, setMarkedDates] = useState({});
+  const [markedDates, setMarkedDates] = useState<Record<string, MarkedDates>>(
+    {},
+  );
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 

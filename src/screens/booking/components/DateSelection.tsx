@@ -1,14 +1,15 @@
+import { memo } from 'react';
 import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
 
 interface DateSelectionProps {
-  onHandleDateModalPress: () => void; // Function type for handling modal press
-  date: string | null; // Date can be a string or null
+  onHandleDateModalPress: () => void;
+  date: string | null;
 }
 
-const DateSelection: React.FC<DateSelectionProps> = ({
+const DateSelection = ({
   onHandleDateModalPress,
   date,
-}) => {
+}: DateSelectionProps) => {
   return (
     <TouchableWithoutFeedback onPress={onHandleDateModalPress}>
       <View style={styles.container}>
@@ -32,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DateSelection;
+export default memo(DateSelection);

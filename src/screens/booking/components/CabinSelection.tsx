@@ -1,12 +1,20 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { memo } from 'react';
+import { Text, View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+
+type CabinSelectionProps = {
+  cabin: string;
+  onPress: (cabin: string) => void;
+  styles?: StyleProp<ViewStyle>;
+  selectedCabin: string;
+};
 
 const CabinSelection = ({
   cabin,
   onPress,
   styles: customStyles,
   selectedCabin,
-}: any) => {
+}: CabinSelectionProps) => {
   return (
     <View style={[styles.container, customStyles]}>
       <Text style={styles.cabinText}>{cabin}</Text>
@@ -36,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CabinSelection;
+export default memo(CabinSelection);
