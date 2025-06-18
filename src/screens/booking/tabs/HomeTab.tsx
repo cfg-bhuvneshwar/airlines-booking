@@ -9,8 +9,9 @@ import {
 import { Colors } from '../../../common/constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../../common/components/Header';
-import { useRef, useState } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { pushPageloadEvent } from '../../../utils/AepUtils';
+import { AepPageName } from '../../../common/constants/AepConstants';
 
 const { width } = Dimensions.get('window');
 const data = [
@@ -57,26 +58,27 @@ const Home = () => {
   const [current, setCurrent] = useState(0);
   const scrollViewRef = useRef<ScrollView | null>(null);
 
-  const handleScroll = (event: any) => {
+  useEffect(() => {
+    pushPageloadEvent(AepPageName.HOME);
+  }, []);
+
+  const handleScroll = useCallback((event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     setCurrent(index);
-  };
+  }, []);
 
-  const handleDotPress = (index: number) => {
+  const handleDotPress = useCallback((index: number) => {
     setCurrent(index);
     scrollViewRef.current?.scrollTo({
       x: index * width,
       animated: true,
     });
-  };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <Header title="Coforge Airlines" />
-
-      <Icon name="home" size={30} color="#4CAF50" />
-
       <View style={styles.container}>
         <ScrollView
           ref={scrollViewRef}
@@ -87,13 +89,7 @@ const Home = () => {
           scrollEventThrottle={100}
           contentContainerStyle={styles.scrollContainer}>
           {data.map((item, index) => (
-            <View
-              key={index}
-              style={{
-                marginHorizontal: 20,
-                marginTop: 15,
-                borderColor: '#fff',
-              }}>
+            <View key={index} style={styles.itemContainer}>
               <View style={[{ width: width - 40 }]}>
                 <Image source={item.image} style={styles.bannerImage} />
                 <Text style={styles.itemText}>{item.title}</Text>
@@ -102,7 +98,6 @@ const Home = () => {
             </View>
           ))}
         </ScrollView>
-
         <View style={styles.dotsContainer}>
           {data.map((_, index) => (
             <Text
@@ -123,65 +118,54 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   container: {
-    // flex: 1,
-
     alignItems: 'center',
   },
-  // bannerList: {
-  //   paddingHorizontal: 10,
-  //   marginTop: 20,
-  // },
-  // bannerContainer: {
-  //   marginHorizontal: 10,
-  //   borderRadius: 10,
-  //   overflow: 'hidden',
-  // },
   bannerImage: {
     width: width - 40,
-    height: 130,
+    height: 170,
     resizeMode: 'cover',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
-
-  // container: {
-  //   flex: 1,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   scrollContainer: {
     alignItems: 'center',
-    marginVertical: 30,
+    marginVertical: 20,
   },
-  // item: {
-  //   // backgroundColor: Colors.background,
-  //   // height: 250,
-  //   justifyContent: 'center',
-  //   // alignItems: 'center',
-  // },
+  itemContainer: {
+    marginHorizontal: 20,
+    marginTop: 15,
+    backgroundColor: '#1d2c40',
+    borderRadius: 20,
+  },
   itemText: {
     fontSize: 16,
-    color: '#fff',
-    marginLeft: 20,
-    marginTop: 15,
+    color: Colors.white,
+    marginHorizontal: 15,
+    marginTop: 10,
   },
   itemSubtitle: {
-    fontSize: 14,
-    color: '#fff',
-    marginLeft: 20,
-    marginVertical: 10,
+    fontSize: 13,
+    color: Colors.white,
+    marginHorizontal: 15,
+    marginTop: 5,
+    marginBottom: 10,
   },
   dotsContainer: {
     flexDirection: 'row',
-    marginTop: 15,
+    backgroundColor: '#1d2c40',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
   },
   dot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#ccc',
-    marginHorizontal: 5,
+    backgroundColor: 'gray',
+    marginHorizontal: 10,
   },
   activeDot: {
-    backgroundColor: 'blue',
+    backgroundColor: Colors.white,
   },
 });
 

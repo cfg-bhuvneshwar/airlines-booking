@@ -1,6 +1,8 @@
 [
   {
     "flightId": "1",
+    "flightNumber": "AI202",
+    "airlineName": "Air India",
     "departureTime": "4:50",
     "arrivalTime": "16:05",
     "numberOfStops": 1,
@@ -9,7 +11,8 @@
     "toAirportCode": "NYC",
     "economyFare": 100000,
     "businessFare": 200000,
-    "miles": 2000
+    "miles": 2000,
+    "currency": "INR"
   },
   {
     "flightId": "2",
@@ -21,7 +24,9 @@
     "toAirportCode": "NYC",
     "economyFare": 130000,
     "businessFare": 250000,
-    "miles": 2500
+    "miles": 2500,
+    "flightNumber": "AI203",
+    "airlineName": "Air India"
   },
   {
     "flightId": "3",
@@ -33,7 +38,9 @@
     "toAirportCode": "NYC",
     "economyFare": 222222,
     "businessFare": 350000,
-    "miles": 3000
+    "miles": 3000,
+    "flightNumber": "AI204",
+    "airlineName": "Air India"
   },
   {
     "flightId": "4",
@@ -45,7 +52,9 @@
     "toAirportCode": "LON",
     "economyFare": 110000,
     "businessFare": 220000,
-    "miles": 1800
+    "miles": 1800,
+    "flightNumber": "AI205",
+    "airlineName": "Air India"
   },
   {
     "flightId": "5",
@@ -57,7 +66,9 @@
     "toAirportCode": "LON",
     "economyFare": 120000,
     "businessFare": 200000,
-    "miles": 2200
+    "miles": 2200,
+    "flightNumber": "I206",
+    "airlineName": "Indigo"
   },
   {
     "flightId": "6",
@@ -69,7 +80,9 @@
     "toAirportCode": "DEL",
     "economyFare": 100000,
     "businessFare": 200000,
-    "miles": 2000
+    "miles": 2000,
+    "flightNumber": "I207",
+    "airlineName": "Indigo"
   },
   {
     "flightId": "7",
@@ -81,7 +94,9 @@
     "toAirportCode": "DEL",
     "economyFare": 130000,
     "businessFare": 250000,
-    "miles": 2500
+    "miles": 2500,
+    "flightNumber": "I208",
+    "airlineName": "Indigo"
   },
   {
     "flightId": "8",
@@ -93,7 +108,9 @@
     "toAirportCode": "DEL",
     "economyFare": 222222,
     "businessFare": 350000,
-    "miles": 3000
+    "miles": 3000,
+    "flightNumber": "V209",
+    "airlineName": "Vistara"
   },
   {
     "flightId": "9",
@@ -105,7 +122,9 @@
     "toAirportCode": "PNQ",
     "economyFare": 110000,
     "businessFare": 220000,
-    "miles": 1800
+    "miles": 1800,
+    "flightNumber": "V210",
+    "airlineName": "Vistara"
   },
   {
     "flightId": "10",
@@ -117,6 +136,8 @@
     "toAirportCode": "PNQ",
     "economyFare": 120000,
     "businessFare": 200000,
-    "miles": 2200
+    "miles": 2200,
+    "flightNumber": "V211",
+    "airlineName": "Vistara"
   }
 ]

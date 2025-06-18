@@ -1,5 +1,5 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { Colors } from '../../../common/constants/Colors';
+import { Colors } from '../../../../../common/constants/Colors';
 import { Text, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
 import { memo, RefObject } from 'react';
 
@@ -11,7 +11,7 @@ type CityItem = {
 };
 
 type FromToBottomSheetProps = {
-  ref: RefObject<BottomSheetModal>;
+  ref: RefObject<BottomSheetModal | null>;
   list: CityItem[];
   onPress: (item: CityItem) => void;
   type: string;
@@ -34,7 +34,7 @@ const FromToBottomSheet = ({
       backgroundStyle={styles.modalBackground}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{type}</Text>
-        <Text style={styles.closeButton} onPress={() => ref.current?.close()}>
+        <Text style={styles.closeButton} onPress={() => ref?.current?.close()}>
           Close
         </Text>
       </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   modalBackground: {
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.white,
   },
   header: {
     flexDirection: 'row',

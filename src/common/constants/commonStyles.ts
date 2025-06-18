@@ -4,7 +4,7 @@ import { Colors } from './Colors';
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.white,
   },
   marginSmall: {
     margin: 8,

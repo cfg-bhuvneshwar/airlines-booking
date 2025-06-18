@@ -7,19 +7,11 @@ export interface UserData {
   email: string;
   contactNumber: string;
   password?: string;
-  memberType: 'Silver' | 'Gold' | 'Platinum' | '';
+  loyaltyTier: 'Silver' | 'Gold' | 'Platinum' | '';
   points: number;
   bookings: number;
   miles: number;
 }
-
-// export interface UpdateUserData {
-//   uid: string;
-//   memberType: 'Silver' | 'Gold' | 'Platinum' | '';
-//   points: number;
-//   bookings: number;
-//   miles: number;
-// }
 
 export interface RecentSearchData {
   fromCity: string;
@@ -37,6 +29,7 @@ export interface RecentSearchData {
 
 export interface BookingData {
   flightId: string;
+  flightNumber: string;
   departureTime: string;
   arrivalTime: string;
   numberOfStops: number;
@@ -49,9 +42,10 @@ export interface BookingData {
   adults: number;
   children: number;
   infantsWithSeats: number;
+  infants: number;
   totalFare: number;
   date: string;
-  seats?: number[];
+  seats?: string[];
   miles: number;
 }
 
@@ -71,7 +65,7 @@ export interface CurrentBookingData {
 export interface FinalBookingData {
   userId: string;
   bookingId: string;
-  bookingDate: number;
+  bookingDate: string;
   oneway?: BookingData;
   roundTrip?: BookingData;
   totalFare: number;

@@ -1,17 +1,10 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
 import {
   saveCurrentBookingData,
   selectRecentSearchData,
 } from '../../state/flightSlice';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GuestInfoScreenProps } from '../../navigation/types';
 import { formatDate, showToastOrAlert } from '../../utils/Utils';
 import { Colors } from '../../common/constants/Colors';
@@ -19,6 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
 import { selectUserData } from '../../state/userSlice';
 import TitleSelection from '../../common/components/TitleSelection';
+import { pushPageloadEvent } from '../../utils/AepUtils';
+import ActionButton from '../../common/components/ActionButton';
+import { AepPageName } from '../../common/constants/AepConstants';
+import CustomKeyboardAvoidingView from '../../common/components/CustomKeyboardAvoidingView';
 
 const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
   const dispatch = useAppDispatch();
@@ -69,125 +66,130 @@ const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
     setTextInputs(initialInputs);
   }, [recentSearchData]);
 
-  const handleTitleChange = (id: string, text: string) => {
-    const updatedInputs = textInputs.map(input =>
-      input.id === id ? { ...input, title: text } : input,
-    );
-    setTextInputs(updatedInputs);
-  };
+  useEffect(() => {
+    pushPageloadEvent(AepPageName.GUEST_INFORMATION);
+  }, []);
 
-  const handleFirstNameChange = (id: string, text: string) => {
-    const updatedInputs = textInputs.map(input =>
-      input.id === id ? { ...input, firstName: text } : input,
-    );
-    setTextInputs(updatedInputs);
-  };
+  const handleTitleChange = useCallback(
+    (id: string, text: string) => {
+      const updatedInputs = textInputs.map(input =>
+        input.id === id ? { ...input, title: text } : input,
+      );
+      setTextInputs(updatedInputs);
+    },
+    [textInputs],
+  );
 
-  const handleLastNameChange = (id: string, text: string) => {
-    const updatedInputs = textInputs.map(input =>
-      input.id === id ? { ...input, lastName: text } : input,
-    );
-    setTextInputs(updatedInputs);
-  };
+  const handleFirstNameChange = useCallback(
+    (id: string, text: string) => {
+      const updatedInputs = textInputs.map(input =>
+        input.id === id ? { ...input, firstName: text } : input,
+      );
+      setTextInputs(updatedInputs);
+    },
+    [textInputs],
+  );
+
+  const handleLastNameChange = useCallback(
+    (id: string, text: string) => {
+      const updatedInputs = textInputs.map(input =>
+        input.id === id ? { ...input, lastName: text } : input,
+      );
+      setTextInputs(updatedInputs);
+    },
+    [textInputs],
+  );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <Header title="Guest Information" />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.contentContainer}>
-          <Text
-            style={
-              styles.routeText
-            }>{`${recentSearchData[0].fromCity} -> ${recentSearchData[0].toCity}`}</Text>
-          <Text style={styles.dateText}>
-            {recentSearchData[0].endDate !== ''
-              ? `${formatDate(recentSearchData[0].startDate)} - ${formatDate(
-                  recentSearchData[0].endDate,
-                )}`
-              : `${formatDate(recentSearchData[0].startDate)}`}
-          </Text>
-          <View style={styles.guestInfoContainer}>
-            <Text style={styles.sectionTitle}>Guest Information</Text>
-            {textInputs.map((item, index) => (
-              <View key={index}>
-                <Text style={styles.inputLabel}>{item.id}</Text>
-                {/* <Dropdown
-                  style={styles.dropdown}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  data={userTitles}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="label"
-                  placeholder={'Title'}
-                  value={item.title}
-                  onChange={({ label }) => handleTitleChange(item.id, label)}
-                /> */}
-
-                <TitleSelection
-                  title={item.title}
-                  onChange={({ label }: { label: string }) =>
-                    handleTitleChange(item.id, label)
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <Header title="Guest Information" icon />
+      <CustomKeyboardAvoidingView>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.contentContainer}>
+          <View>
+            <Text
+              style={
+                styles.routeText
+              }>{`${recentSearchData[0].fromCity} -> ${recentSearchData[0].toCity}`}</Text>
+            <Text style={styles.dateText}>
+              {recentSearchData[0].endDate !== ''
+                ? `${formatDate(recentSearchData[0].startDate)} - ${formatDate(
+                    recentSearchData[0].endDate,
+                  )}`
+                : `${formatDate(recentSearchData[0].startDate)}`}
+            </Text>
+            <View style={styles.guestInfoContainer}>
+              <Text style={styles.sectionTitle}>Guest Information</Text>
+              {textInputs.map((item, index) => (
+                <View key={index}>
+                  <Text style={styles.inputLabel}>{item.id}</Text>
+                  <TitleSelection
+                    title={item.title}
+                    onChange={({ label }: { label: string }) =>
+                      handleTitleChange(item.id, label)
+                    }
+                    dropdown={styles.dropdown}
+                    selectedTextStyle={styles.selectedTextStyle}
+                  />
+                  <TextInput
+                    placeholder="First name"
+                    onChangeText={text => handleFirstNameChange(item.id, text)}
+                    value={item.firstName}
+                    style={styles.input}
+                  />
+                  <TextInput
+                    placeholder="Last name"
+                    onChangeText={text => handleLastNameChange(item.id, text)}
+                    value={item.lastName}
+                    style={styles.input}
+                  />
+                </View>
+              ))}
+              <Text style={styles.sectionTitle}>Contact Information</Text>
+              <TextInput
+                placeholder="Contact number"
+                onChangeText={text => setContactNumber(text)}
+                value={contactNumber}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Email address"
+                onChangeText={text => setEmail(text)}
+                value={email}
+                style={styles.input}
+              />
+              <ActionButton
+                label="Continue"
+                buttonViewStyles={styles.continueButton}
+                buttonTextStyles={styles.continueButtonText}
+                onPress={() => {
+                  if (contactNumber === '') {
+                    showToastOrAlert('Enter contact number');
+                  } else if (email === '') {
+                    showToastOrAlert('Enter email');
+                  } else {
+                    dispatch(
+                      saveCurrentBookingData({
+                        guestInformation: textInputs,
+                        contactNumber,
+                        email,
+                      }),
+                    );
+                    navigation.navigate('SeatSelectionScreen');
                   }
-                  dropdown={styles.dropdown}
-                  selectedTextStyle={styles.selectedTextStyle}
-                />
-                <TextInput
-                  placeholder="First name"
-                  onChangeText={text => handleFirstNameChange(item.id, text)}
-                  value={item.firstName}
-                  style={styles.input}
-                />
-                <TextInput
-                  placeholder="Last name"
-                  onChangeText={text => handleLastNameChange(item.id, text)}
-                  value={item.lastName}
-                  style={styles.input}
-                />
-              </View>
-            ))}
-            <Text style={styles.sectionTitle}>Contact Information</Text>
-            <TextInput
-              placeholder="Contact number"
-              onChangeText={text => setContactNumber(text)}
-              value={contactNumber}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Email address"
-              onChangeText={text => setEmail(text)}
-              value={email}
-              style={styles.input}
-            />
-            <TouchableWithoutFeedback
-              onPress={() => {
-                if (contactNumber === '') {
-                  showToastOrAlert('Enter contact number');
-                } else if (email === '') {
-                  showToastOrAlert('Enter email');
-                } else {
-                  dispatch(
-                    saveCurrentBookingData({
-                      guestInformation: textInputs,
-                      contactNumber,
-                      email,
-                    }),
-                  );
-                  navigation.navigate('SeatSelectionScreen');
-                }
-              }}>
-              <View style={styles.continueButton}>
-                <Text style={styles.continueButtonText}>Continue</Text>
-              </View>
-            </TouchableWithoutFeedback>
+                }}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </CustomKeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: Colors.background,
   },
@@ -205,13 +207,13 @@ const styles = StyleSheet.create({
   },
   guestInfoContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     borderRadius: 20,
     padding: 20,
     marginVertical: 20,
     borderWidth: 1,
-    borderColor: '#fff',
-    shadowColor: '#fff',
+    borderColor: Colors.white,
+    shadowColor: Colors.white,
   },
   sectionTitle: {
     fontSize: 18,
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     padding: 10,
-    borderColor: '#000',
+    borderColor: Colors.black,
     borderRadius: 10,
   },
   selectedTextStyle: {
@@ -235,21 +237,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     padding: 10,
-    borderColor: '#000',
+    borderColor: Colors.black,
     borderRadius: 10,
   },
   continueButton: {
-    backgroundColor: '#cac029',
+    backgroundColor: Colors.buttonBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 45,
     borderRadius: 25,
     marginVertical: 15,
   },
   continueButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: Colors.white,
+    fontSize: 16,
   },
 });
 

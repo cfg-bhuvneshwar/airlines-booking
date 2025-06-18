@@ -1,11 +1,5 @@
 import { useCallback, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LoginScreenProps } from '../../navigation/types';
 import { useAppDispatch, useAppSelector } from '../../common/hooks/hooks';
@@ -14,6 +8,8 @@ import { UserData } from '../../utils/types';
 import { Colors } from '../../common/constants/Colors';
 import { commonStyles } from '../../common/constants/commonStyles';
 import Header from '../../common/components/Header';
+import ActionButton from '../../common/components/ActionButton';
+import CustomKeyboardAvoidingView from '../../common/components/CustomKeyboardAvoidingView';
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const dispatch = useAppDispatch();
@@ -35,7 +31,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         lastName: userData.lastName,
         email: userData.email,
         dob: userData.dob,
-        memberType: userData.memberType,
+        loyaltyTier: userData.loyaltyTier,
         points: userData.points,
         bookings: userData.bookings,
         miles: userData.miles,
@@ -50,33 +46,41 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <Header title="Login" />
-      <View style={styles.container}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          style={styles.emailPasswordInput}
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={[commonStyles.marginTopLarge, styles.emailPasswordInput]}
-        />
-        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-          <Text style={{ color: Colors.light }}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.replace('RegisterScreen')}
-          style={styles.registerButton}>
-          <Text style={{ color: Colors.dark }}>
-            Don't have account Yet? Create Account
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <Header title="Login" icon />
+      <CustomKeyboardAvoidingView>
+        <View style={styles.container}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            style={styles.emailPasswordInput}
+          />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={[commonStyles.marginTopLarge, styles.emailPasswordInput]}
+          />
+
+          <ActionButton
+            label="Login"
+            buttonViewStyles={styles.loginButton}
+            buttonTextStyles={styles.loginButtonText}
+            onPress={handleLogin}
+          />
+
+          <ActionButton
+            label="Don't have account Yet? Create Account"
+            buttonViewStyles={styles.registerButton}
+            buttonTextStyles={styles.registerButtonText}
+            onPress={() => {
+              navigation.replace('RegisterScreen');
+            }}
+          />
+        </View>
+      </CustomKeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 25,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     justifyContent: 'center',
   },
   emailPasswordInput: {
@@ -101,18 +105,26 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: Colors.buttonBackground,
-    width: '100%',
     alignItems: 'center',
     height: 45,
     justifyContent: 'center',
     borderRadius: 25,
     marginTop: 100,
   },
+  loginButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+  },
   registerButton: {
     marginTop: 30,
-    width: '100%',
     alignItems: 'center',
+    height: 45,
     justifyContent: 'center',
+    borderRadius: 25,
+  },
+  registerButtonText: {
+    color: Colors.black,
+    fontSize: 16,
   },
 });
 

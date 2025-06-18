@@ -1,8 +1,19 @@
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PreLoginScreenProps } from '../../navigation/types';
+import ActionButton from '../../common/components/ActionButton';
+import { Colors } from '../../common/constants/Colors';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { savePreLogin } from '../../state/preLoginSlice';
 
 const PreLoginScreen = ({ navigation }: PreLoginScreenProps) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(savePreLogin(true));
+  }, [dispatch]);
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.contentContainer}>
@@ -13,29 +24,30 @@ const PreLoginScreen = ({ navigation }: PreLoginScreenProps) => {
             easily.
           </Text>
         </View>
-        <TouchableOpacity
+        <ActionButton
+          label="Login"
+          buttonViewStyles={styles.loginButton}
+          buttonTextStyles={styles.loginButtonText}
           onPress={() => {
             navigation.navigate('LoginScreen');
           }}
-          style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
+        />
+        <ActionButton
+          label="Create Account"
+          buttonViewStyles={styles.registerButton}
+          buttonTextStyles={styles.registerButtonText}
           onPress={() => {
             navigation.navigate('RegisterScreen');
           }}
-          style={styles.registerButton}>
-          <Text style={styles.registerButtonText}>Create Account</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
+        />
+        <ActionButton
+          label="Continue as Guest"
+          buttonViewStyles={styles.guestButton}
+          buttonTextStyles={styles.guestButtonText}
           onPress={() => {
             navigation.replace('HomeScreen');
           }}
-          style={styles.guestButton}>
-          <Text style={styles.guestButtonText}>Continue as Guest</Text>
-        </TouchableOpacity>
+        />
       </View>
     </SafeAreaView>
   );
@@ -44,11 +56,11 @@ const PreLoginScreen = ({ navigation }: PreLoginScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
   },
   textContainer: {
     flex: 1,
@@ -58,7 +70,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#000',
+    color: Colors.black,
   },
   description: {
     fontSize: 17,
@@ -67,44 +79,42 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loginButton: {
-    backgroundColor: '#cac029',
+    backgroundColor: Colors.buttonBackground,
     alignItems: 'center',
     height: 45,
     justifyContent: 'center',
     borderRadius: 25,
-    margin: 15,
+    marginHorizontal: 20,
   },
   loginButtonText: {
-    color: 'white',
-    fontSize: 15,
+    color: Colors.white,
+    fontSize: 16,
   },
   registerButton: {
     alignItems: 'center',
     height: 45,
     justifyContent: 'center',
     borderRadius: 25,
-    borderColor: '#000000',
-    marginTop: 5,
-    marginHorizontal: 15,
+    borderColor: Colors.black,
+    marginTop: 20,
+    marginHorizontal: 20,
     borderWidth: 1,
   },
   registerButtonText: {
-    color: '#000',
-    fontSize: 15,
+    color: Colors.black,
+    fontSize: 16,
   },
   guestButton: {
     alignItems: 'center',
     height: 45,
     justifyContent: 'center',
     borderRadius: 25,
-    borderColor: '#000000',
-    marginVertical: 20,
-    marginHorizontal: 15,
-    borderWidth: 1,
+    marginHorizontal: 20,
+    marginVertical: 10,
   },
   guestButtonText: {
-    color: '#000',
-    fontSize: 15,
+    color: Colors.black,
+    fontSize: 16,
   },
 });
 

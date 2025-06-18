@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
   Text,
@@ -18,9 +18,13 @@ import {
 } from '../../state/flightSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
+import { pushClickEvent, pushPageloadEvent } from '../../utils/AepUtils';
+import FlightsListItem from './components/FlightsListItem';
+import { AepPageName } from '../../common/constants/AepConstants';
 
-type Flight = {
+export type Flight = {
   flightId: string;
+  flightNumber: string;
   departureTime: string;
   arrivalTime: string;
   numberOfStops: number;
@@ -51,16 +55,7 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
   } = route.params;
 
   const [selectedCabin, setSelectedCabin] = useState(cabin);
-  const [filteredFlights, setFilteredFlights] = useState<
-    {
-      departureTime: string;
-      arrivalTime: string;
-      numberOfStops: number;
-      timeDuration: string;
-      fromAirportCode: string;
-      toAirportCode: string;
-    }[]
-  >([]);
+  const [filteredFlights, setFilteredFlights] = useState<Flight[]>([]);
 
   useEffect(() => {
     const flightss = flights.filter(
@@ -71,19 +66,105 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
     setFilteredFlights(flightss);
   }, [dispatch, fromAirportCode, toAirportCode]);
 
-  const renderItem: ListRenderItem<Flight> = ({ item }) => {
-    let totalFare =
-      selectedCabin === 'Economy' ? item.economyFare : item.businessFare;
-    totalFare = totalFare * (adults + children + infantsWithSeats);
+  useEffect(() => {
+    pushPageloadEvent(AepPageName.FLIGHT_SEARCH);
+  }, []);
 
-    return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          if (endDate === '') {
-            dispatch(
-              saveCurrentBookingData({
-                oneway: {
+  const onSelectFlight = useCallback(
+    (item: Flight, totalFare: number) => {
+      if (endDate === '') {
+        dispatch(
+          saveCurrentBookingData({
+            oneway: {
+              flightId: item.flightId,
+              flightNumber: item.flightNumber,
+              departureTime: item.departureTime,
+              arrivalTime: item.arrivalTime,
+              numberOfStops: item.numberOfStops,
+              timeDuration: item.timeDuration,
+              fromAirportCode: item.fromAirportCode,
+              toAirportCode: item.toAirportCode,
+              economyFare: item.economyFare,
+              businessFare: item.businessFare,
+              cabin: selectedCabin,
+              date: startDate,
+              adults,
+              children,
+              infantsWithSeats,
+              infants,
+              totalFare,
+              miles: item.miles,
+            },
+          }),
+        );
+        pushClickEvent({
+          eventName: 'flightSelect',
+          event: {
+            flightContext: {
+              tripType: 'oneway',
+              oneway: {
+                flightId: item.flightId,
+                flightNumber: item.flightNumber,
+                departureTime: item.departureTime,
+                arrivalTime: item.arrivalTime,
+                numberOfStops: item.numberOfStops,
+                timeDuration: item.timeDuration,
+                fromAirportCode: item.fromAirportCode,
+                toAirportCode: item.toAirportCode,
+                economyFare: item.economyFare,
+                businessFare: item.businessFare,
+                cabinClass: selectedCabin,
+                date: startDate,
+                totalFare,
+                miles: item.miles,
+                passengerCount: {
+                  adults: adults,
+                  children: children,
+                  infants: infants + infantsWithSeats,
+                },
+              },
+            },
+          },
+        });
+        navigation.navigate('GuestInfoScreen');
+      } else {
+        if (
+          currentBookingData &&
+          currentBookingData.oneway &&
+          Object.keys(currentBookingData.oneway).length > 0
+        ) {
+          dispatch(
+            saveCurrentBookingData({
+              roundTrip: {
+                flightId: item.flightId,
+                flightNumber: item.flightNumber,
+                departureTime: item.departureTime,
+                arrivalTime: item.arrivalTime,
+                numberOfStops: item.numberOfStops,
+                timeDuration: item.timeDuration,
+                fromAirportCode: item.fromAirportCode,
+                toAirportCode: item.toAirportCode,
+                economyFare: item.economyFare,
+                businessFare: item.businessFare,
+                cabin: selectedCabin,
+                date: startDate,
+                adults,
+                children,
+                infantsWithSeats,
+                infants,
+                totalFare,
+                miles: item.miles,
+              },
+            }),
+          );
+          pushClickEvent({
+            eventName: 'flightSelect',
+            event: {
+              flightContext: {
+                tripType: 'roundTrip',
+                roundTrip: {
                   flightId: item.flightId,
+                  flightNumber: item.flightNumber,
                   departureTime: item.departureTime,
                   arrivalTime: item.arrivalTime,
                   numberOfStops: item.numberOfStops,
@@ -92,114 +173,127 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
                   toAirportCode: item.toAirportCode,
                   economyFare: item.economyFare,
                   businessFare: item.businessFare,
-                  cabin: selectedCabin,
+                  cabinClass: selectedCabin,
                   date: startDate,
-                  adults,
-                  children,
-                  infantsWithSeats,
                   totalFare,
                   miles: item.miles,
+                  passengerCount: {
+                    adults: adults,
+                    children: children,
+                    infants: infants + infantsWithSeats,
+                  },
                 },
-              }),
-            );
-            navigation.navigate('GuestInfoScreen');
-          } else {
-            if (
-              currentBookingData &&
-              currentBookingData.oneway &&
-              Object.keys(currentBookingData.oneway).length > 0
-            ) {
-              dispatch(
-                saveCurrentBookingData({
-                  roundTrip: {
-                    flightId: item.flightId,
-                    departureTime: item.departureTime,
-                    arrivalTime: item.arrivalTime,
-                    numberOfStops: item.numberOfStops,
-                    timeDuration: item.timeDuration,
-                    fromAirportCode: item.fromAirportCode,
-                    toAirportCode: item.toAirportCode,
-                    economyFare: item.economyFare,
-                    businessFare: item.businessFare,
-                    cabin: selectedCabin,
-                    adults,
-                    date: startDate,
-                    children,
-                    infantsWithSeats,
-                    totalFare,
-                    miles: item.miles,
-                  },
-                }),
-              );
-              navigation.navigate('GuestInfoScreen');
-            } else {
-              dispatch(
-                saveCurrentBookingData({
-                  oneway: {
-                    flightId: item.flightId,
-                    departureTime: item.departureTime,
-                    arrivalTime: item.arrivalTime,
-                    numberOfStops: item.numberOfStops,
-                    timeDuration: item.timeDuration,
-                    fromAirportCode: item.fromAirportCode,
-                    toAirportCode: item.toAirportCode,
-                    economyFare: item.economyFare,
-                    businessFare: item.businessFare,
-                    cabin: selectedCabin,
-                    date: startDate,
-                    adults,
-                    children,
-                    infantsWithSeats,
-                    totalFare,
-                    miles: item.miles,
-                  },
-                }),
-              );
-              navigation.replace('FlightListScreen', {
-                fromCity: toCity,
-                toCity: fromCity,
-                fromAirportCode: toAirportCode,
-                toAirportCode: fromAirportCode,
-                cabin: cabin,
-                startDate: endDate,
-                endDate: startDate,
+              },
+            },
+          });
+          navigation.navigate('GuestInfoScreen');
+        } else {
+          dispatch(
+            saveCurrentBookingData({
+              oneway: {
+                flightId: item.flightId,
+                flightNumber: item.flightNumber,
+                departureTime: item.departureTime,
+                arrivalTime: item.arrivalTime,
+                numberOfStops: item.numberOfStops,
+                timeDuration: item.timeDuration,
+                fromAirportCode: item.fromAirportCode,
+                toAirportCode: item.toAirportCode,
+                economyFare: item.economyFare,
+                businessFare: item.businessFare,
+                cabin: selectedCabin,
+                date: startDate,
                 adults,
                 children,
                 infantsWithSeats,
                 infants,
-              });
-            }
-          }
-        }}>
-        <View style={styles.flightCard}>
-          <View style={styles.flightDetails}>
-            <View style={styles.flightTimes}>
-              <Text style={styles.flightTimeText}>{item.departureTime}</Text>
-              <Text style={styles.flightDuration}>-----------------------</Text>
-              <Text style={styles.flightTimeText}>{item.arrivalTime}</Text>
-            </View>
-            <View style={styles.flightInfo}>
-              <Text>{item.fromAirportCode}</Text>
-              <Text>{`${
-                item.numberOfStops > 1
-                  ? `${item.numberOfStops} stops`
-                  : `${item.numberOfStops} stop`
-              } ${item.timeDuration}`}</Text>
-              <Text>{item.toAirportCode}</Text>
-            </View>
-          </View>
-          <View style={styles.fareContainer}>
-            <Text style={styles.fareLabel}>From INR</Text>
-            <Text style={styles.fareAmount}>{totalFare}</Text>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
+                totalFare,
+                miles: item.miles,
+              },
+            }),
+          );
+          pushClickEvent({
+            eventName: 'flightSelect',
+            event: {
+              flightContext: {
+                tripType: 'oneway',
+                oneway: {
+                  flightId: item.flightId,
+                  flightNumber: item.flightNumber,
+                  departureTime: item.departureTime,
+                  arrivalTime: item.arrivalTime,
+                  numberOfStops: item.numberOfStops,
+                  timeDuration: item.timeDuration,
+                  fromAirportCode: item.fromAirportCode,
+                  toAirportCode: item.toAirportCode,
+                  economyFare: item.economyFare,
+                  businessFare: item.businessFare,
+                  cabinClass: selectedCabin,
+                  date: startDate,
+                  totalFare,
+                  miles: item.miles,
+                  passengerCount: {
+                    adults: adults,
+                    children: children,
+                    infants: infants + infantsWithSeats,
+                  },
+                },
+              },
+            },
+          });
+          navigation.replace('FlightListScreen', {
+            fromCity: toCity,
+            toCity: fromCity,
+            fromAirportCode: toAirportCode,
+            toAirportCode: fromAirportCode,
+            cabin: cabin,
+            startDate: endDate,
+            endDate: startDate,
+            adults,
+            children,
+            infantsWithSeats,
+            infants,
+          });
+        }
+      }
+    },
+    [
+      adults,
+      cabin,
+      children,
+      currentBookingData,
+      dispatch,
+      endDate,
+      fromAirportCode,
+      fromCity,
+      infants,
+      infantsWithSeats,
+      navigation,
+      selectedCabin,
+      startDate,
+      toAirportCode,
+      toCity,
+    ],
+  );
+
+  const renderItem: ListRenderItem<Flight> = ({ item }) => {
+    let totalFare =
+      selectedCabin === 'Economy' ? item.economyFare : item.businessFare;
+    totalFare = totalFare * (adults + children + infantsWithSeats);
+
+    return (
+      <FlightsListItem
+        key={item.flightId}
+        totalFare={totalFare}
+        onSelectFlight={() => onSelectFlight(item, totalFare)}
+        item={item}
+      />
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <Header title="Flights" />
+      <Header title="Flights" icon />
       <View style={styles.content}>
         <Text style={styles.routeText}>{`${fromCity} -> ${toCity}`}</Text>
         <Text style={styles.dateText}>{formatDate(startDate)}</Text>
@@ -258,8 +352,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: '#e9f4f4',
-    padding: 15,
+    backgroundColor: '#e9e9e9',
+    padding: 20,
   },
   routeText: {
     fontSize: 17,
@@ -273,69 +367,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     height: 35,
-    borderColor: '#000',
+    borderColor: Colors.black,
     marginVertical: 20,
   },
   activeCabin: {
-    backgroundColor: '#213650',
+    backgroundColor: Colors.background,
     width: '50%',
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   activeCabinText: {
-    color: 'white',
+    color: Colors.white,
   },
   inactiveCabin: {
     width: '50%',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  flightCard: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    marginVertical: 5,
-    borderRadius: 10,
-  },
-  flightDetails: {
-    width: '60%',
-    justifyContent: 'center',
-    margin: 10,
-  },
-  flightTimes: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 5,
-  },
-  flightTimeText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  flightDuration: {
-    fontSize: 15,
-  },
-  flightInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 5,
-  },
-  fareContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#e1e1e1',
-    padding: 10,
-    alignItems: 'center',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  fareLabel: {
-    fontSize: 12,
-  },
-  fareAmount: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
   },
   noFlightsContainer: {
     flex: 1,

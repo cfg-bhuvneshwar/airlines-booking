@@ -1,8 +1,7 @@
 [
-  { "label": "Mr", "value": "1" },
-  { "label": "Mrs", "value": "2" },
-  { "label": "Dr", "value": "3" },
-  { "label": "Prof.", "value": "4" },
-  { "label": "Ms", "value": "5" },
-  { "label": "Mrs", "value": "6" }
+  { "label": "Mr", "value": "Mr" },
+  { "label": "Mrs", "value": "Mrs" },
+  { "label": "Dr", "value": "Dr" },
+  { "label": "Prof.", "value": "Prof." },
+  { "label": "Ms", "value": "Ms" }
 ]

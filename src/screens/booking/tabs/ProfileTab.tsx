@@ -1,23 +1,25 @@
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../../common/constants/Colors';
 import { useAppSelector, useAppDispatch } from '../../../common/hooks/hooks';
-import {
-  selectUserData,
-  saveUserData,
-  selectRegisterData,
-} from '../../../state/userSlice';
+import { selectUserData, saveUserData } from '../../../state/userSlice';
 import Header from '../../../common/components/Header';
 import { fontFamilies } from '../../../common/constants/fontFamily';
+import { useCallback, useEffect } from 'react';
+import { pushPageloadEvent } from '../../../utils/AepUtils';
+import ActionButton from '../../../common/components/ActionButton';
+import { AepPageName } from '../../../common/constants/AepConstants';
 
 const ProfileTab = ({ navigation }: any) => {
   const dispatch = useAppDispatch();
 
   const userData = useAppSelector(selectUserData);
-  const registerData = useAppSelector(selectRegisterData);
-  console.log('regiterData : ', registerData);
 
-  const handleLogout = () => {
+  useEffect(() => {
+    pushPageloadEvent(AepPageName.PROFILE);
+  }, []);
+
+  const handleLogout = useCallback(() => {
     dispatch(
       saveUserData({
         uid: '',
@@ -27,7 +29,7 @@ const ProfileTab = ({ navigation }: any) => {
         dob: '',
         email: '',
         password: '',
-        memberType: '',
+        loyaltyTier: '',
         points: 0,
         contactNumber: '',
         miles: 0,
@@ -39,7 +41,7 @@ const ProfileTab = ({ navigation }: any) => {
       index: 0,
       routes: [{ name: 'HomeScreen' }],
     });
-  };
+  }, [dispatch, navigation]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -54,16 +56,18 @@ const ProfileTab = ({ navigation }: any) => {
               Guest members
             </Text>
           </View>
-          <TouchableOpacity
+          <ActionButton
+            label="Login"
+            buttonViewStyles={styles.loginButton}
+            buttonTextStyles={styles.loginButtonText}
             onPress={() => navigation.navigate('LoginScreen')}
-            style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          />
+          <ActionButton
+            label="Create Account"
+            buttonViewStyles={styles.registerButton}
+            buttonTextStyles={styles.registerButtonText}
             onPress={() => navigation.navigate('RegisterScreen')}
-            style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>Create Account</Text>
-          </TouchableOpacity>
+          />
         </View>
       ) : (
         <View style={styles.loggedInContainer}>
@@ -79,15 +83,18 @@ const ProfileTab = ({ navigation }: any) => {
 
             <View style={styles.memberInfoContainer}>
               <Text style={styles.memberTypeText}>
-                {userData.memberType} Member
+                {userData.loyaltyTier} Member
               </Text>
               <Text style={styles.pointsText}>{userData.points} Points</Text>
               <Text style={styles.pointsText}>{userData.miles} miles</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={handleLogout} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Log Out</Text>
-          </TouchableOpacity>
+          <ActionButton
+            label="Logout"
+            buttonViewStyles={styles.loginButton}
+            buttonTextStyles={styles.loginButtonText}
+            onPress={handleLogout}
+          />
         </View>
       )}
     </SafeAreaView>
@@ -107,16 +114,16 @@ const styles = StyleSheet.create({
   },
   memberTypeText: {
     fontSize: 16,
-    color: '#fff',
+    color: Colors.white,
     fontWeight: 'bold',
   },
   pointsText: {
     fontSize: 14,
-    color: '#fff',
+    color: Colors.white,
   },
   guestContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
   },
   guestContent: {
     flex: 1,
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
   },
   guestTitle: {
     fontSize: 22,
-    color: '#000',
+    color: Colors.black,
   },
   guestDescription: {
     fontSize: 17,
@@ -137,30 +144,29 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: Colors.buttonBackground,
     alignItems: 'center',
-    height: 45,
     justifyContent: 'center',
+    height: 45,
     borderRadius: 25,
     marginVertical: 10,
     marginHorizontal: 20,
   },
   loginButtonText: {
-    color: Colors.light,
-    fontSize: 15,
-    fontFamily: fontFamilies.SemiBold,
+    color: Colors.white,
+    fontSize: 16,
   },
   registerButton: {
     alignItems: 'center',
     height: 45,
     justifyContent: 'center',
     borderRadius: 25,
-    borderColor: '#000000',
+    borderColor: Colors.black,
     borderWidth: 1,
     marginVertical: 10,
     marginHorizontal: 20,
   },
   registerButtonText: {
-    color: '#000',
-    fontSize: 15,
+    color: Colors.black,
+    fontSize: 16,
   },
   loggedInContainer: {
     flex: 1,
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 16,
-    color: '#fff',
+    color: Colors.white,
     position: 'absolute',
     top: 10,
     left: 10,

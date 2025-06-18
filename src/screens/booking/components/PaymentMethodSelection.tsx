@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+import { Colors } from '../../../common/constants/Colors';
 
 type PaymentMethodSelectionProps = {
   paymentMethod: string; // The name of the payment method (e.g., "Credit/Debit", "UPI")
@@ -26,7 +27,7 @@ const PaymentMethodSelection = ({
               paymentMethod === selectedPaymentMethod ? 'checked' : 'unchecked'
             }
             onPress={() => onPress(paymentMethod)}
-            color="#000"
+            color={Colors.black}
           />
         </View>
       </View>
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   divider: {
-    backgroundColor: '#000',
+    backgroundColor: '#c7c5c5',
     height: 1,
   },
 });

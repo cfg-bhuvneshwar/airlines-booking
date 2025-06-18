@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Colors } from '../../../common/constants/Colors';
 
 type SeatProps = {
   seat: {
@@ -16,7 +17,7 @@ type SeatProps = {
 
 const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: SeatProps) => {
   const seatStyle = [
-    styles.seat,
+    styles.seatStyle,
     seat.status === 'available' && styles.availableSeat,
     selectedSeat.status === 'selected' && styles.selectedSeat,
     seat.status === 'unavailable' && styles.occupiedSeat,
@@ -31,7 +32,7 @@ const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: SeatProps) => {
         <Text style={styles.seatLabel}>B</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 3 ? (
-        <Text style={[styles.seatLabel]}>C</Text>
+        <Text style={styles.seatLabel}>C</Text>
       ) : null}
       {rowIndex === 0 && seat.seatNumber % 6 === 4 ? (
         <Text style={styles.seatLabel}>D</Text>
@@ -49,7 +50,13 @@ const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: SeatProps) => {
           <View style={seatStyle} />
         </TouchableWithoutFeedback>
         {seat.seatNumber % 6 === 3 ? (
-          <View style={styles.seatNumberContainer}>
+          <View
+            style={{
+              width: 30,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <Text style={styles.seatNumberText}>{rowIndex + 1}</Text>
           </View>
         ) : null}
@@ -59,15 +66,7 @@ const Seat = ({ seat, onSelect, rowIndex, selectedSeat }: SeatProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    marginVertical: 5,
-  },
-  seat: {
+  seatStyle: {
     width: 40,
     height: 40,
     borderRadius: 5,
@@ -79,21 +78,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#81bdbf',
   },
   selectedSeat: {
-    backgroundColor: '#213650',
+    backgroundColor: Colors.background,
   },
   occupiedSeat: {
     backgroundColor: '#e1e1e1',
   },
   seatLabel: {
-    alignSelf: 'center',
+    width: 40,
+    borderRadius: 5,
+    textAlign: 'center',
+    marginHorizontal: 2,
+    fontWeight: 'bold',
   },
   seatLabelMarginRight: {
     marginRight: 40,
   },
   seatRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
+    // alignItems: 'center',
+    // backgroundColor: 'green',
+    marginVertical: 5,
   },
   seatNumberContainer: {
     justifyContent: 'center',

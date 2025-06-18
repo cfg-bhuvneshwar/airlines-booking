@@ -13,6 +13,7 @@ import {
 import { userSliceReducer } from './userSlice';
 import { flightSliceReducer } from './flightSlice';
 import { bookingSliceReducer } from './bookingSlice';
+import { preLoginSliceReducer } from './preLoginSlice';
 
 const persistConfig = {
   key: 'root',
@@ -39,10 +40,17 @@ const bookingPersistConfig = {
   whitelist: ['bookings'],
 };
 
+const preLoginPersistConfig = {
+  key: 'preLogin',
+  storage: AsyncStorage,
+  whitelist: ['preLoginVisited'],
+};
+
 const dynamicReducer = {
   user: persistReducer(userPersistConfig, userSliceReducer),
   flight: persistReducer(flightPersistConfig, flightSliceReducer),
   booking: persistReducer(bookingPersistConfig, bookingSliceReducer),
+  preLogin: persistReducer(preLoginPersistConfig, preLoginSliceReducer),
 };
 const persistedReducer = persistReducer(
   persistConfig,

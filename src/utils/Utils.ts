@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { Alert, Platform, ToastAndroid } from 'react-native';
 
+import { CurrentBookingData } from './types';
+
 type FareCalculationParams = {
   cabin: 'Economy' | 'Business';
   economyFare: number;
@@ -8,15 +10,6 @@ type FareCalculationParams = {
   adults: number;
   children: number;
   infantsWithSeats: number;
-};
-
-type TripFare = {
-  totalFare: number;
-};
-
-type TotalFareCalculationParams = {
-  oneway: TripFare;
-  roundTrip: TripFare;
 };
 
 const formatDate = (dateString: string) => {
@@ -56,14 +49,16 @@ const calculateFare = ({
   return totalFare;
 };
 
-const calculateTotalFare = ({
-  oneway,
-  roundTrip,
-}: TotalFareCalculationParams) => {
-  if (Object.keys(roundTrip).length > 0) {
-    return oneway.totalFare + roundTrip.totalFare;
+const calculateTotalFare = (currentBooking: CurrentBookingData) => {
+  if (
+    'roundTrip' in currentBooking &&
+    currentBooking.roundTrip !== undefined &&
+    currentBooking.oneway !== undefined
+  ) {
+    return (currentBooking.oneway?.totalFare +
+      currentBooking.roundTrip?.totalFare) as number;
   }
-  return oneway.totalFare;
+  return (currentBooking.oneway?.totalFare as number) || 0;
 };
 
 const formatDateDob = (dateString: string) => {
@@ -85,12 +80,39 @@ const generate16DigitId = () => {
   return result;
 };
 
-export const showToastOrAlert = (message: string) => {
+const showToastOrAlert = (message: string) => {
   if (Platform.OS === 'android') {
     ToastAndroid.show(message, ToastAndroid.SHORT);
   } else if (Platform.OS === 'ios') {
     Alert.alert('Notification', message, [{ text: 'OK' }]);
   }
+};
+
+const convertSeatNumberToAsPerRow = (seatsArray: number[]) => {
+  const newArr: string[] = [];
+  seatsArray.forEach(element => {
+    const rowNumber = Math.ceil(element / 6);
+    const seatLetter = (() => {
+      switch (element % 6) {
+        case 1:
+          return 'A';
+        case 2:
+          return 'B';
+        case 3:
+          return 'C';
+        case 4:
+          return 'D';
+        case 5:
+          return 'E';
+        case 0:
+          return 'F';
+        default:
+          return '';
+      }
+    })();
+    newArr.push(`${rowNumber}${seatLetter}`);
+  });
+  return [...newArr];
 };
 
 export {
@@ -100,4 +122,6 @@ export {
   formatDateDob,
   generate16DigitId,
   calculateTotalFare,
+  showToastOrAlert,
+  convertSeatNumberToAsPerRow,
 };

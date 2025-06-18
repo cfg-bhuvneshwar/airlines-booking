@@ -15,7 +15,7 @@ const initialState: UserState = {
     email: '',
     dob: '',
     title: '',
-    memberType: '',
+    loyaltyTier: '',
     points: 0,
     bookings: 0,
     miles: 0,
@@ -45,13 +45,11 @@ const userSlice = createSlice({
       const index = registerArr.findIndex(
         ({ uid }) => uid === payload.uid,
       ) as number;
-      userData.memberType = payload.memberType;
+      userData.loyaltyTier = payload.loyaltyTier;
       userData.points = payload.points;
       userData.bookings = payload.bookings;
       userData.miles = payload.miles;
-      console.log('userData : ', userData);
       registerArr[index] = userData;
-      console.log('registerArr : ', registerArr);
       state.registerData = registerArr;
     },
   },

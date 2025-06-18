@@ -1,10 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import SeatRow from './SeatRow';
 import { Colors } from '../../../common/constants/Colors';
+import ActionButton from '../../../common/components/ActionButton';
+
+export type SeatProps = {
+  seatNumber: number;
+  status: 'available' | 'unavailable' | 'selected';
+};
 
 interface SeatSelectionProps {
-  seats: { seatNumber: number; status: string }[];
+  seats: SeatProps[];
   selectedSeats: number[];
   onSelect: (seatNumber: number) => void;
   totalPassengers: number;
@@ -41,17 +47,16 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
         ))}
       </View>
       <Text style={styles.aircraftDirection}>↓ Back of aircraft ↓</Text>
-      <TouchableWithoutFeedback
+      <ActionButton
+        label="Confirm"
+        disabled={isConfirmDisabled}
+        buttonViewStyles={[
+          styles.confirmButton,
+          isConfirmDisabled && { backgroundColor: Colors.disabledButton },
+        ]}
+        buttonTextStyles={styles.confirmButtonText}
         onPress={onConfirm}
-        disabled={isConfirmDisabled}>
-        <View
-          style={[
-            styles.confirmButton,
-            isConfirmDisabled && { backgroundColor: Colors.disabledButton },
-          ]}>
-          <Text style={styles.confirmButtonText}>Confirm</Text>
-        </View>
-      </TouchableWithoutFeedback>
+      />
     </View>
   );
 };
@@ -70,15 +75,16 @@ const styles = StyleSheet.create({
   confirmButton: {
     backgroundColor: Colors.buttonBackground,
     alignItems: 'center',
-    height: 45,
     justifyContent: 'center',
+    height: 45,
     borderRadius: 25,
     marginVertical: 15,
     marginHorizontal: 20,
     width: '100%',
   },
   confirmButtonText: {
-    color: 'white',
+    color: Colors.white,
+    fontSize: 16,
   },
 });
 

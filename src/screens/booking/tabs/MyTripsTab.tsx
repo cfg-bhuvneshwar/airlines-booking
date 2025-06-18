@@ -3,15 +3,13 @@ import Header from '../../../common/components/Header';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { selectBookingData } from '../../../state/bookingSlice';
 import { useAppSelector } from '../../../common/hooks/hooks';
-import {
-  FlatList,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { FlatList, Text, StyleSheet, ListRenderItem } from 'react-native';
+import { useEffect } from 'react';
+import { pushPageloadEvent } from '../../../utils/AepUtils';
+import MyTripsListItem from '../components/MyTripsListItem';
+import { AepPageName } from '../../../common/constants/AepConstants';
 
-type Booking = {
+export type Booking = {
   oneway?: {
     fromAirportCode: string;
     toAirportCode: string;
@@ -32,43 +30,12 @@ type Booking = {
 const MyTripsTab = () => {
   const bookingData = useAppSelector(selectBookingData);
 
-  const renderItem = ({ item }: { item: Booking }) => (
-    <View style={styles.bookingItem}>
-      {/* Oneway Trip Details */}
-      {item.oneway && (
-        <>
-          <Text
-            style={
-              styles.title
-            }>{`${item.oneway.fromAirportCode} -> ${item.oneway.toAirportCode}`}</Text>
-          <Text>{`Departure: ${item.oneway.departureTime}`}</Text>
-          <Text>{`Arrival: ${item.oneway.arrivalTime}`}</Text>
-          <Text>{`Cabin: ${item.oneway.cabin}`}</Text>
-        </>
-      )}
+  useEffect(() => {
+    pushPageloadEvent(AepPageName.TRIPS);
+  }, []);
 
-      {/* Round Trip Details */}
-      {item.roundTrip && (
-        <>
-          <Text
-            style={[
-              styles.title,
-              styles.roundTripTitle,
-            ]}>{`${item.roundTrip.fromAirportCode} -> ${item.roundTrip.toAirportCode}`}</Text>
-          <Text>{`Departure: ${item.roundTrip.departureTime}`}</Text>
-          <Text>{`Arrival: ${item.roundTrip.arrivalTime}`}</Text>
-          <Text>{`Cabin: ${item.roundTrip.cabin}`}</Text>
-        </>
-      )}
-
-      {/* Total Fare and Check-In Button */}
-      <View style={styles.footer}>
-        <Text style={styles.totalFare}>{`Total Fare: ₹${item.totalFare}`}</Text>
-        <TouchableOpacity style={styles.checkInButton}>
-          <Text style={styles.checkInButtonText}>Check-In</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+  const renderItem: ListRenderItem<Booking> = ({ item }) => (
+    <MyTripsListItem item={item} />
   );
 
   return (
@@ -94,46 +61,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
-  },
-  bookingItem: {
-    backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  roundTripTitle: {
-    marginTop: 16,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  totalFare: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  checkInButton: {
-    backgroundColor: Colors.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  checkInButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   emptyText: {
     textAlign: 'center',
