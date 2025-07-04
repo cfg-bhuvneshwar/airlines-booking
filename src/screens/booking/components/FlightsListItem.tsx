@@ -19,17 +19,20 @@ const FlightsListItem = ({
         <View style={styles.flightDetails}>
           <View style={styles.flightTimes}>
             <Text style={styles.flightTimeText}>{item.departureTime}</Text>
-            <Text style={styles.flightDuration}>-----------------------</Text>
+            <Text style={styles.flightDuration}>------------</Text>
             <Text style={styles.flightTimeText}>{item.arrivalTime}</Text>
           </View>
           <View style={styles.flightInfo}>
-            <Text>{item.fromAirportCode}</Text>
-            <Text>{`${
-              item.numberOfStops > 1
-                ? `${item.numberOfStops} stops`
-                : `${item.numberOfStops} stop`
-            } ${item.timeDuration}`}</Text>
-            <Text>{item.toAirportCode}</Text>
+            <Text style={styles.airportCode}>{item.fromAirportCode}</Text>
+            <View style={styles.timeDurationContainer}>
+              <Text style={styles.timeDurationText}>{item.timeDuration}</Text>
+              <Text style={styles.stopsText}>{`${
+                item.numberOfStops > 1
+                  ? `${item.numberOfStops} stops`
+                  : `${item.numberOfStops} stop`
+              }`}</Text>
+            </View>
+            <Text style={styles.airportCode}>{item.toAirportCode}</Text>
           </View>
         </View>
         <View style={styles.fareContainer}>
@@ -70,6 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 5,
+    alignItems: 'center',
   },
   fareContainer: {
     flex: 1,
@@ -92,6 +96,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  airportCode: {
+    fontSize: 14,
+  },
+  timeDurationContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  timeDurationText: {
+    fontSize: 12,
+  },
+  stopsText: {
+    fontSize: 11,
   },
 });
 

@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../common/components/Header';
 import { pushClickEvent, pushPageloadEvent } from '../../utils/AepUtils';
 import FlightsListItem from './components/FlightsListItem';
-import { AepPageName } from '../../common/constants/AepConstants';
+import { AepPageName, AepPageUrl } from '../../common/constants/AepConstants';
 
 export type Flight = {
   flightId: string;
@@ -67,7 +67,7 @@ const FlightListScreen = ({ navigation, route }: FlightListScreenProps) => {
   }, [dispatch, fromAirportCode, toAirportCode]);
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.FLIGHT_SEARCH);
+    pushPageloadEvent(AepPageName.FLIGHT_SEARCH, AepPageUrl.FLIGHT_SEARCH);
   }, []);
 
   const onSelectFlight = useCallback(

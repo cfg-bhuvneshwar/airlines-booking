@@ -11,7 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../../common/components/Header';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { pushPageloadEvent } from '../../../utils/AepUtils';
-import { AepPageName } from '../../../common/constants/AepConstants';
+import {
+  AepPageName,
+  AepPageUrl,
+} from '../../../common/constants/AepConstants';
 
 const { width } = Dimensions.get('window');
 const data = [
@@ -59,7 +62,7 @@ const Home = () => {
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.HOME);
+    pushPageloadEvent(AepPageName.HOME, AepPageUrl.HOME);
   }, []);
 
   const handleScroll = useCallback((event: any) => {

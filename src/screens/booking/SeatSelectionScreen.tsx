@@ -24,7 +24,7 @@ import {
   pushPageloadEvent,
   userInfoForAEP,
 } from '../../utils/AepUtils';
-import { AepPageName } from '../../common/constants/AepConstants';
+import { AepPageName, AepPageUrl } from '../../common/constants/AepConstants';
 
 const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   navigation,
@@ -48,7 +48,7 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   }, []);
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.SEAT_SELECTION);
+    pushPageloadEvent(AepPageName.SEAT_SELECTION, AepPageUrl.SEAT_SELECTION);
   }, []);
 
   const handleSeatSelect = useCallback(
@@ -132,7 +132,8 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
                     (currentBooking.oneway?.infantsWithSeats as number),
                 },
                 seatSelection: {
-                  seatNumber: convertSeatNumberToAsPerRow(onwardSelectedSeats),
+                  seatNumber:
+                    convertSeatNumberToAsPerRow(onwardSelectedSeats).join('|'),
                   seatType: 'Aisle',
                   isPaidSeat: false,
                   seatPrice: 0,
@@ -190,7 +191,8 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
                   (currentBooking.oneway?.infantsWithSeats as number),
               },
               seatSelection: {
-                seatNumber: convertSeatNumberToAsPerRow(onwardSelectedSeats),
+                seatNumber:
+                  convertSeatNumberToAsPerRow(onwardSelectedSeats).join('|'),
                 seatType: 'Aisle',
                 isPaidSeat: false,
                 seatPrice: 0,
@@ -220,7 +222,8 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
                   (currentBooking.roundTrip?.infantsWithSeats as number),
               },
               seatSelection: {
-                seatNumber: convertSeatNumberToAsPerRow(returnSelectedSeats),
+                seatNumber:
+                  convertSeatNumberToAsPerRow(returnSelectedSeats).join('|'),
                 seatType: 'Aisle',
                 isPaidSeat: false,
                 seatPrice: 0,

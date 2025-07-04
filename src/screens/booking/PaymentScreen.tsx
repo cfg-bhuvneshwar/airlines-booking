@@ -34,7 +34,7 @@ import {
   userInfoForAEP,
 } from '../../utils/AepUtils';
 import ActionButton from '../../common/components/ActionButton';
-import { AepPageName } from '../../common/constants/AepConstants';
+import { AepPageName, AepPageUrl } from '../../common/constants/AepConstants';
 import CustomKeyboardAvoidingView from '../../common/components/CustomKeyboardAvoidingView';
 
 const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
@@ -52,7 +52,7 @@ const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
   const [cvv, setCvv] = useState('');
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.PAYMENT);
+    pushPageloadEvent(AepPageName.PAYMENT, AepPageUrl.PAYMENT);
   }, []);
 
   const submitBooking = useCallback(() => {
@@ -158,7 +158,7 @@ const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
                 (currentBooking.oneway?.infantsWithSeats as number),
             },
             seatSelection: {
-              seatNumber: currentBooking.oneway?.seats,
+              seatNumber: currentBooking.oneway?.seats?.join('|'),
               seatType: 'Aisle',
               isPaidSeat: false,
               seatPrice: 0,
@@ -190,7 +190,7 @@ const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
                       (currentBooking.roundTrip?.infantsWithSeats as number),
                   },
                   seatSelection: {
-                    seatNumber: currentBooking.roundTrip?.seats,
+                    seatNumber: currentBooking.roundTrip?.seats?.join('|'),
                     seatType: 'Aisle',
                     isPaidSeat: false,
                     seatPrice: 0,

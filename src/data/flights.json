@@ -3,7 +3,7 @@
     "flightId": "1",
     "flightNumber": "AI202",
     "airlineName": "Air India",
-    "departureTime": "4:50",
+    "departureTime": "04:50",
     "arrivalTime": "16:05",
     "numberOfStops": 1,
     "timeDuration": "20h 45m",
@@ -16,7 +16,7 @@
   },
   {
     "flightId": "2",
-    "departureTime": "5:50",
+    "departureTime": "05:50",
     "arrivalTime": "17:05",
     "numberOfStops": 1,
     "timeDuration": "10h 45m",
@@ -30,7 +30,7 @@
   },
   {
     "flightId": "3",
-    "departureTime": "2:50",
+    "departureTime": "02:50",
     "arrivalTime": "14:05",
     "numberOfStops": 2,
     "timeDuration": "15h 45m",
@@ -73,7 +73,7 @@
   {
     "flightId": "6",
     "departureTime": "16:05",
-    "arrivalTime": "4:50",
+    "arrivalTime": "04:50",
     "numberOfStops": 1,
     "timeDuration": "20h 45m",
     "fromAirportCode": "NYC",
@@ -87,7 +87,7 @@
   {
     "flightId": "7",
     "departureTime": "17:05",
-    "arrivalTime": "5:50",
+    "arrivalTime": "05:50",
     "numberOfStops": 1,
     "timeDuration": "10h 45m",
     "fromAirportCode": "NYC",
@@ -101,7 +101,7 @@
   {
     "flightId": "8",
     "departureTime": "14:05",
-    "arrivalTime": "2:50",
+    "arrivalTime": "02:50",
     "numberOfStops": 2,
     "timeDuration": "15h 45m",
     "fromAirportCode": "NYC",

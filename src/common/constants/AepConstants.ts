@@ -8,3 +8,16 @@ export const AepPageName = {
   TRIPS: 'trips',
   PROFILE: 'profile',
 };
+
+export const AepPageUrl = {
+  HOME: 'home',
+  BOOK_FLIGHT: 'home/book-flight',
+  FLIGHT_SEARCH: 'home/book-flight/flight-search',
+  GUEST_INFORMATION: 'home/book-flight/flight-search/guest-information',
+  SEAT_SELECTION:
+    'home/book-flight/flight-search/guest-information/seat-selection',
+  PAYMENT:
+    'home/book-flight/flight-search/guest-information/seat-selection/payment',
+  TRIPS: 'trips',
+  PROFILE: 'profile',
+};

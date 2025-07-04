@@ -24,7 +24,10 @@ import ActionButton from '../../../common/components/ActionButton';
 import DateSelectionBottomSheet from '../components/homtabcomponents/bottomsheetcomponents/DateSelectionBottomSheet';
 import GuestCabinSelectionBottomSheet from '../components/homtabcomponents/bottomsheetcomponents/GuestCabinSelectionBottomSheet';
 import PreviouslySearchedListItem from '../components/PreviouslySearchedListItem';
-import { AepPageName } from '../../../common/constants/AepConstants';
+import {
+  AepPageName,
+  AepPageUrl,
+} from '../../../common/constants/AepConstants';
 
 interface MarkedDates {
   color: string;
@@ -82,7 +85,7 @@ const BookTab = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.BOOK_FLIGHT);
+    pushPageloadEvent(AepPageName.BOOK_FLIGHT, AepPageUrl.BOOK_FLIGHT);
   }, []);
 
   const searchFlights = useCallback(
@@ -115,24 +118,27 @@ const BookTab = ({ navigation }: any) => {
         }),
       );
       dispatch(saveCurrentBookingData({}));
-      pushClickEvent({
-        eventName: 'flightSearch',
-        event: {
-          flightContext: {
-            tripType: eDate !== '' ? 'roundTrip' : 'oneway',
-            origin: fromCity,
-            destination: toCity,
-            departureDate: new Date(sDate).toISOString(),
-            returnDate: eDate !== '' ? new Date(eDate).toISOString() : '',
-            cabinClass: cabin,
-            passengerCount: {
-              adults: adults,
-              children: children,
-              infants: infants + infantsWithSeats,
-            },
+      const pushClickEventData: Record<string, any> = {
+        searchContext: {
+          tripType: eDate !== '' ? 'roundTrip' : 'oneway',
+          origin: fromCity,
+          destination: toCity,
+          departureDate: new Date(sDate).toISOString(),
+          cabinClass: cabin,
+          passengerCount: {
+            adults: adults,
+            children: children,
+            infants: infants + infantsWithSeats,
           },
         },
-      });
+      };
+      if (eDate !== '') {
+        pushClickEventData.searchContext.returnDate = new Date(
+          eDate,
+        ).toISOString();
+      }
+
+      pushClickEvent({ eventName: 'flightSearch', event: pushClickEventData });
       navigation.navigate('FlightListScreen', {
         fromCity: fromCity,
         toCity: toCity,

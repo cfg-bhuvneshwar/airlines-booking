@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useReducer,
+  useEffect,
+} from 'react';
 import { Modal, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RegisterScreenProps } from '../../navigation/types';
@@ -14,21 +20,105 @@ import TitleSelection from '../../common/components/TitleSelection';
 import ActionButton from '../../common/components/ActionButton';
 import CustomKeyboardAvoidingView from '../../common/components/CustomKeyboardAvoidingView';
 
+const initialState = {
+  title: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  contactNumber: '',
+  dob: '',
+  password: '',
+  isFormValid: false,
+};
+
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const dispatch = useAppDispatch();
 
   const maxDate = useRef(new Date().toISOString().split('T')[0]);
-  const [email, setEmail] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [title, setTitle] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState('');
-  const [password, setPassword] = useState('');
+
+  const signupReducer = (
+    state: {
+      title: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      contactNumber: string;
+      dob: string;
+      password: string;
+      isFormValid: boolean;
+    },
+    action: { type: string; payload?: any },
+  ) => {
+    switch (action.type) {
+      case 'SET_FIELD':
+        return {
+          ...state,
+          [action.payload.field]: action.payload.value,
+        };
+      case 'VALIDATE_FORM':
+        const {
+          firstName,
+          lastName,
+          email,
+          password,
+          contactNumber,
+          dob,
+          title,
+        } = state;
+        const isValid =
+          firstName.length > 0 &&
+          lastName.length > 0 &&
+          email.includes('@') &&
+          dob !== '' &&
+          password.length >= 6 &&
+          contactNumber.length > 0 &&
+          title !== '';
+        console.log(isValid);
+
+        return {
+          ...state,
+          isFormValid: isValid,
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [formState, formDispatch] = useReducer(signupReducer, initialState);
+  const {
+    title,
+    firstName,
+    lastName,
+    email,
+    contactNumber,
+    dob,
+    password,
+    isFormValid,
+  } = formState;
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  useEffect(() => {
+    formDispatch({ type: 'VALIDATE_FORM' });
+  }, [
+    formDispatch,
+    firstName,
+    lastName,
+    email,
+    contactNumber,
+    dob,
+    title,
+    password,
+  ]);
+
   const handleDateSelect = useCallback((date: any) => {
-    setDob(date.dateString);
+    formDispatch({
+      type: 'SET_FIELD',
+      payload: {
+        field: 'dob',
+        value: date.dateString,
+      },
+    });
     setIsModalVisible(false);
   }, []);
 
@@ -87,20 +177,46 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           <View style={styles.form}>
             <TitleSelection
               title={title}
-              onChange={({ label }: { label: string }) => setTitle(label)}
+              onChange={({ label }: { label: string }) => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'title',
+                    value: label,
+                  },
+                });
+              }}
               dropdown={styles.dropdown}
               selectedTextStyle={styles.selectedTextStyle}
             />
             <TextInput
               placeholder="First name"
+              autoCapitalize="words"
               value={firstName}
-              onChangeText={setFirstName}
+              onChangeText={text => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'firstName',
+                    value: text.trim(),
+                  },
+                });
+              }}
               style={styles.input}
             />
             <TextInput
               placeholder="Last name"
+              autoCapitalize="words"
               value={lastName}
-              onChangeText={setLastName}
+              onChangeText={text => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'lastName',
+                    value: text.trim(),
+                  },
+                });
+              }}
               style={styles.input}
             />
             <TextInput
@@ -112,27 +228,59 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             <TextInput
               placeholder="Email"
               value={email}
-              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={text => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'email',
+                    value: text,
+                  },
+                });
+              }}
               style={styles.input}
             />
             <TextInput
               placeholder="Contact Number"
               value={contactNumber}
-              onChangeText={setContactNumber}
+              keyboardType="phone-pad"
+              onChangeText={text => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'contactNumber',
+                    value: text,
+                  },
+                });
+              }}
               style={styles.input}
             />
             <TextInput
               placeholder="Password"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={text => {
+                formDispatch({
+                  type: 'SET_FIELD',
+                  payload: {
+                    field: 'password',
+                    value: text,
+                  },
+                });
+              }}
               secureTextEntry
               style={styles.input}
             />
             <ActionButton
               label="Register"
-              buttonViewStyles={styles.registerButton}
+              buttonViewStyles={[
+                styles.registerButton,
+                !isFormValid && { backgroundColor: Colors.disabledButton },
+              ]}
               buttonTextStyles={styles.registerButtonText}
               onPress={handleRegister}
+              disabled={!isFormValid}
             />
           </View>
         </ScrollView>

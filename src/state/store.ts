@@ -14,6 +14,7 @@ import { userSliceReducer } from './userSlice';
 import { flightSliceReducer } from './flightSlice';
 import { bookingSliceReducer } from './bookingSlice';
 import { preLoginSliceReducer } from './preLoginSlice';
+import { aepSliceReducer } from './aepSlice';
 
 const persistConfig = {
   key: 'root',
@@ -46,11 +47,18 @@ const preLoginPersistConfig = {
   whitelist: ['preLoginVisited'],
 };
 
+const aepPersistConfig = {
+  key: 'aep',
+  storage: AsyncStorage,
+  whitelist: ['experienceCloudId'],
+};
+
 const dynamicReducer = {
   user: persistReducer(userPersistConfig, userSliceReducer),
   flight: persistReducer(flightPersistConfig, flightSliceReducer),
   booking: persistReducer(bookingPersistConfig, bookingSliceReducer),
   preLogin: persistReducer(preLoginPersistConfig, preLoginSliceReducer),
+  aep: persistReducer(aepPersistConfig, aepSliceReducer),
 };
 const persistedReducer = persistReducer(
   persistConfig,

@@ -14,7 +14,7 @@ import { selectUserData } from '../../state/userSlice';
 import TitleSelection from '../../common/components/TitleSelection';
 import { pushPageloadEvent } from '../../utils/AepUtils';
 import ActionButton from '../../common/components/ActionButton';
-import { AepPageName } from '../../common/constants/AepConstants';
+import { AepPageName, AepPageUrl } from '../../common/constants/AepConstants';
 import CustomKeyboardAvoidingView from '../../common/components/CustomKeyboardAvoidingView';
 
 const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
@@ -67,7 +67,10 @@ const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
   }, [recentSearchData]);
 
   useEffect(() => {
-    pushPageloadEvent(AepPageName.GUEST_INFORMATION);
+    pushPageloadEvent(
+      AepPageName.GUEST_INFORMATION,
+      AepPageUrl.GUEST_INFORMATION,
+    );
   }, []);
 
   const handleTitleChange = useCallback(
@@ -152,12 +155,16 @@ const GuestInfoScreen = ({ navigation }: GuestInfoScreenProps) => {
                 onChangeText={text => setContactNumber(text)}
                 value={contactNumber}
                 style={styles.input}
+                keyboardType="phone-pad"
               />
               <TextInput
                 placeholder="Email address"
                 onChangeText={text => setEmail(text)}
                 value={email}
                 style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               <ActionButton
                 label="Continue"
